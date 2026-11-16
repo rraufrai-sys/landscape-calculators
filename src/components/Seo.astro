@@ -5,10 +5,11 @@ interface Props {
   title: string;
   description: string;
   noindex?: boolean;
+  omitCanonical?: boolean;
   jsonLd?: unknown;
 }
 
-const { title, description, noindex = false, jsonLd } = Astro.props;
+const { title, description, noindex = false, omitCanonical = false, jsonLd } = Astro.props;
 const canonical = pageUrl(Astro.url.pathname);
 const image = assetUrl("/og.png");
 const json = jsonLd === undefined ? "" : JSON.stringify(jsonLd).replace(/</g, "\\u003c");
@@ -19,7 +20,7 @@ const json = jsonLd === undefined ? "" : JSON.stringify(jsonLd).replace(/</g, "\
 <title>{title}</title>
 <meta name="description" content={description} />
 <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
-<link rel="canonical" href={canonical} />
+{!omitCanonical && <link rel="canonical" href={canonical} />}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -29,7 +30,7 @@ const json = jsonLd === undefined ? "" : JSON.stringify(jsonLd).replace(/</g, "\
 <meta property="og:type" content="website" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
+{!omitCanonical && <meta property="og:url" content={canonical} />}
 <meta property="og:image" content={image} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />

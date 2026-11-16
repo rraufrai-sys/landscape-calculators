@@ -2,48 +2,37 @@
 import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../config/site";
-import { webPageJsonLd } from "../lib/seo";
+import { contactJsonLd } from "../lib/seo";
 
-const title = "Contact | Yardwork";
+const title = "Contact Abdul Rauf | Landscaping Calculators";
 const description =
-  "Contact Yardwork Calculators. The email and mailing address on this page are placeholders until the site is published.";
-const pathname = "/contact/";
+  "Email Abdul Rauf at r.rauf.rai@gmail.com about these landscaping calculators. There is no message form. Your own email program sends the note.";
 ---
 
-<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+<BaseLayout title={title} description={description} jsonLd={contactJsonLd(description)}>
   <header class="page-intro">
     <Breadcrumb current="Contact" />
     <h1>Contact</h1>
-    <p class="lede">
-      Corrections to a formula or a density, and questions about the site, can come here once the
-      placeholder below has been replaced.
-    </p>
   </header>
   <article class="prose">
-    <div class="todo-banner">
-      <p>
-        <strong>TODO:</strong> This contact information is a placeholder. Replace the email and mailing
-        address before you publish the site or apply for AdSense. Both values live in one file,
-        <code>src/config/site.ts</code>, next to the site URL.
-      </p>
-    </div>
-    <h2>Email</h2>
+    <h2>How do I reach Abdul Rauf?</h2>
     <p>
-      <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
-    </p>
-    <h2>Mail</h2>
-    <p>{site.contact.mailingAddress}</p>
-    <h2>What is worth writing about</h2>
-    <p>
-      A supplier density that should be added, a bag size that is now the common one in stores, or
-      a result that does not match the working on the page. Include the page address and the
-      numbers you typed. The calculators do not store what you entered, so the message has to
-      carry the example.
+      Email {site.publisherName} at
+      <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.
+      There is no message form on this page. Your own email program sends the note.
+      This page does not promise how soon you will get a reply.
     </p>
     <p>
-      There is no phone number yet, and there is no contact form, because a form would need a
-      mailbox that is actually delivered. Until the TODO above is resolved, do not treat the
-      example.com address as a way to reach anyone.
+      There is no company, street address, or phone number to list. The <a href="/about/">About</a> page says the same thing.
     </p>
+    <h2>What should I send if a calculator result looks wrong?</h2>
+    <p>A useful note names the calculator, the numbers you typed, and the result you expected.</p>
+    <ul>
+      <li>Which calculator you used: gravel, mulch, topsoil, or sod.</li>
+      <li>The numbers you typed, and the units, such as feet, inches, cubic yards, or pounds.</li>
+      <li>The result you saw, and the result you expected.</li>
+      <li>The browser you used.</li>
+    </ul>
+    <p>Do not include passwords, payment details, or other private information in that note.</p>
   </article>
 </BaseLayout>

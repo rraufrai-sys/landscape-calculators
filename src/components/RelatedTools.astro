@@ -9,14 +9,13 @@ const { current } = Astro.props;
 const others = tools.filter((tool) => tool.href !== current);
 ---
 
-<section aria-labelledby="related-heading">
-  <h2 id="related-heading">Other calculators</h2>
+<section id="related" aria-labelledby="related-heading">
+  <h2 id="related-heading">Which calculator matches the material?</h2>
   <ul class="related">
     {
       others.map((tool) => (
         <li>
-          <a href={tool.href}>{tool.name}</a>
-          <span>: {tool.summary}</span>
+          <a href={tool.href}>{tool.name}</a>: {tool.detail}
         </li>
       ))
     }

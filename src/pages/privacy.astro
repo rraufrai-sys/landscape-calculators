@@ -4,24 +4,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../config/site";
 import { webPageJsonLd } from "../lib/seo";
 
-const title = "Privacy Policy | Yardwork";
+const title = "Privacy Notice | Landscaping Calculators";
 const description =
-  "Privacy policy for Yardwork Calculators: measurements stay in your browser, the site sets no cookies of its own, and advertising is not loaded in this version.";
+  "Privacy notice for these landscaping calculators. Measurements stay in your browser. The site does not set its own cookies, and advertising scripts are not loaded.";
 const pathname = "/privacy/";
 ---
 
-<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd({ title, description, pathname, breadcrumb: "Privacy" })}>
   <header class="page-intro">
-    <Breadcrumb current="Privacy policy" />
-    <h1>Privacy policy</h1>
+    <Breadcrumb current="Privacy" />
+    <h1>Privacy</h1>
     <p class="lede">How {site.legalName} handles information. Last updated {site.updatedLabel}.</p>
   </header>
   <article class="prose">
     <h2>Who this covers</h2>
     <p>
-      This policy describes {site.legalName}, the free calculators published at this site. The
-      contact address is still a placeholder. The current details, and the note that they must be
-      replaced before the site is published, are on the <a href="/contact/">contact page</a>.
+      This policy describes the free calculators published by {site.publisherName} at this site.
+      The public email is on the <a href="/contact/">contact page</a>. There is no company and no
+      street address.
     </p>
 
     <h2>Calculations stay on your device</h2>
@@ -61,10 +61,9 @@ const pathname = "/privacy/";
 
     <h2>Messages you send</h2>
     <p>
-      If you email the address on the contact page, the message contains whatever you put in it,
-      along with your email address. Use that address only after the placeholder has been replaced
-      with a mailbox that is actually read. We would use a message to answer you or to correct a
-      figure on the site, and we would not sell it.
+      If you email {site.contact.email}, the message contains whatever you put in it, along with
+      your email address. That note is used to answer you or to correct a figure on the site. It
+      is not sold.
     </p>
 
     <h2>Children</h2>

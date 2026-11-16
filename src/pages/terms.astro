@@ -4,16 +4,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../config/site";
 import { webPageJsonLd } from "../lib/seo";
 
-const title = "Terms of Use | Yardwork";
+const title = "Terms of Use | Landscaping Calculators";
 const description =
-  "Terms for the Yardwork landscaping calculators. Results are ordering estimates, not a construction specification, and densities vary by load.";
+  "Terms for these landscaping calculators. Results are ordering estimates, not a construction specification, and densities vary by load.";
 const pathname = "/terms/";
 ---
 
-<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd({ title, description, pathname, breadcrumb: "Terms" })}>
   <header class="page-intro">
-    <Breadcrumb current="Terms of use" />
-    <h1>Terms of use</h1>
+    <Breadcrumb current="Terms" />
+    <h1>Terms</h1>
     <p class="lede">The terms for using {site.legalName}. Last updated {site.updatedLabel}.</p>
   </header>
   <article class="prose">
@@ -71,10 +71,10 @@ const pathname = "/terms/";
 
     <h2>Law and contact</h2>
     <p>
-      These terms are governed by the laws of the United States. A state venue is not named here
-      because the publisher’s mailing address is still a placeholder, which the
-      <a href="/contact/">contact page</a> marks clearly. Questions about the terms can be sent to
-      the contact address once that placeholder has been replaced with a mailbox that is read.
+      {site.publisherName} publishes this site as a personal project, not as a company. There is
+      no street address and no phone number. Questions about the terms can go to the email on the
+      <a href="/contact/">contact page</a>. The <a href="/disclaimer/">disclaimer</a> covers the
+      limit of the estimates. These terms do not name a state venue.
     </p>
   </article>
 </BaseLayout>

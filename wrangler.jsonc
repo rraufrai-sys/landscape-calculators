@@ -1,8 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
+  // Existing Worker. Keep this name so the dashboard attachment is unchanged.
+  // worker.js permanently redirects only the www host. Apex, workers.dev, and previews stay put.
   "name": "landscape-calculators",
-  // Static Astro site. There is no Worker script because every page is pre-rendered.
-  // https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/
+  "main": "worker.js",
   "compatibility_date": "2026-11-16",
   "observability": {
     "enabled": true,
@@ -10,9 +11,17 @@
       "enabled": true
     }
   },
+  // Required by `npx wrangler preview`, which Workers Builds runs for pull requests.
+  // Assets and the 404 setting stay at the top level.
+  "preview_urls": true,
+  "previews": {},
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
+    // The www decision depends on the hostname, so the Worker has to run before
+    // an asset can answer the same path with 200. Asset fetches still apply the 404 page.
+    "run_worker_first": true,
     "not_found_handling": "404-page"
   }
 }

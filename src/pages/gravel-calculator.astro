@@ -2,6 +2,7 @@
 import AdSlot from "../components/AdSlot.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import FaqList from "../components/FaqList.astro";
+import Limitations from "../components/Limitations.astro";
 import RelatedTools from "../components/RelatedTools.astro";
 import VolumeCalculator from "../components/VolumeCalculator.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -10,9 +11,17 @@ import { gravelBags, gravelPresets, presetById } from "../lib/calc";
 import { cubicYardsForArea, formatNumber, tonsPerCubicYard, unwrap, volumeOrderFromFields } from "../lib/calc";
 import { calculatorJsonLd, type Faq } from "../lib/seo";
 
-const title = "Gravel Calculator — Cubic Yards, Tons, and Bags | Yardwork";
+const title = "Gravel Calculator: Cubic Yards, Tons, and Bags";
 const description =
-  "Calculate gravel in cubic yards, cubic feet, and short tons. Rectangles, circles, and triangles, with editable pea gravel, crushed stone, and river rock densities.";
+  "Gravel calculator for cubic yards, cubic feet, and short tons. Rectangle, circle, or triangle, with pea gravel, crushed stone, river rock, and bag counts.";
+const answer =
+  "Multiply the area in square feet by the depth in inches, then divide by 324. That quotient is the cubic yards before any allowance. One cubic yard is 27 cubic feet. Short tons follow the density you enter, using 2,000 pounds per ton. Bag counts round up to a whole bag.";
+const howToName = "How do I use this gravel calculator?";
+const howToSteps = [
+  "Choose a rectangle, circle, or triangle and enter the sides. Switch to metric if you measured in meters and centimeters.",
+  "Enter the depth and the allowance percent. Ten percent orders 1.10 times the measured volume.",
+  "Choose a material or type the density from the supplier. Add a price only when you want a material estimate.",
+];
 const pathname = "/gravel-calculator/";
 const preset = presetById(gravelPresets, gravelExample.presetId);
 const example = unwrap(
@@ -71,14 +80,22 @@ const faqs: Faq[] = [
 ];
 ---
 
-<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Gravel calculator", description, pathname, faqs })}>
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={calculatorJsonLd({
+    name: "Gravel Calculator",
+    description,
+    pathname,
+    answer,
+    faqs,
+    howTo: { name: howToName, steps: howToSteps.map((text) => ({ text })) },
+  })}
+>
   <header class="page-intro">
-    <Breadcrumb current="Gravel calculator" />
-    <h1>Gravel calculator</h1>
-    <p class="lede">
-      Estimate cubic yards, cubic feet, short tons, and bags of gravel for a rectangle, circle, or
-      triangle. Depth is in inches. The density starts from a preset and stays editable.
-    </p>
+    <Breadcrumb current="Gravel Calculator" />
+    <p class="eyebrow">United States · feet and inches · US dollars</p>
+    <h1>Gravel Calculator</h1>
   </header>
 
   <div class="calculator-wrap">
@@ -96,10 +113,15 @@ const faqs: Faq[] = [
     />
   </div>
 
-  <AdSlot slotId="gravel-rectangle" />
-
-  <article class="prose">
-    <h2>How to measure the area</h2>
+  <article class="prose guide">
+    <h2>How much gravel do I need?</h2>
+    <p class="answer">{answer}</p>
+    <h2>{howToName}</h2>
+    <ol class="howto">
+      {howToSteps.map((step) => <li>{step}</li>)}
+    </ol>
+    <AdSlot slotId="gravel-rectangle" />
+    <h2 id="how-to-measure">How do I measure the area?</h2>
     <p>
       Use the outside edges of the area that will actually receive stone. Edging and fabric do not
       change the volume, but they do change where you stop measuring.
@@ -112,7 +134,7 @@ const faqs: Faq[] = [
       <li>Slope: if the stone blankets a bank, measure along the slope. A horizontal tape on a steep bank is shorter than the surface you will cover.</li>
     </ul>
 
-    <h2>How deep to order gravel</h2>
+    <h2>How deep should the gravel be?</h2>
     <p>
       Enter the loose thickness you want delivered. Walking, raking, and compacting make the
       finished layer thinner than that number. The allowance is where you account for the difference.
@@ -151,7 +173,14 @@ const faqs: Faq[] = [
       </table>
     </div>
 
-    <h2>Weight, bags, and what a ton means</h2>
+    <h2 id="formula">What formula turns the measurement into yards and tons?</h2>
+    <p>
+      Area in square feet times depth in feet is cubic feet. Divide by 27 for cubic yards. The same
+      volume is square feet times depth in inches, divided by 324, because one cubic yard spread 1
+      inch deep covers 324 square feet. Short tons are cubic feet times pounds per cubic foot,
+      divided by 2,000. The <a href="/methodology/">methodology</a> lists each density and its source.
+    </p>
+    <h2>How do yards, tons, and bags relate?</h2>
     <p>
       Pea gravel and river rock start at 100 pounds per cubic foot, which is
       {formatNumber(tonsPerCubicYard(100), 2)} short tons per cubic yard. Crushed stone starts at
@@ -172,7 +201,7 @@ const faqs: Faq[] = [
       ton, or by the bag. A quarry ticket and a garden-center bag are different purchases.
     </p>
 
-    <h2>The example loaded in the form</h2>
+    <h2 id="example">What does the example in the form come out to?</h2>
     <p>
       A {gravelExample.primary} by {gravelExample.secondary} foot area at {gravelExample.depthInches} inches
       is {formatNumber(example.areaSqFt, 0)} square feet. Two inches is 2 ÷ 12 feet, so the net
@@ -187,5 +216,6 @@ const faqs: Faq[] = [
     <AdSlot slotId="gravel-banner" size="banner" />
     <FaqList faqs={faqs} />
     <RelatedTools current={pathname} />
+    <Limitations />
   </article>
 </BaseLayout>
