@@ -1,0 +1,63 @@
+---
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { webPageJsonLd } from "../lib/seo";
+
+const title = "Disclaimer | Landscaping Calculators";
+const description =
+  "These landscaping calculators estimate gravel, mulch, topsoil, and sod only. Check quantities with your supplier. They are not a design or a professional specification.";
+const pathname = "/disclaimer/";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={webPageJsonLd({ title, description, pathname, breadcrumb: "Disclaimer" })}
+>
+  <header class="page-intro">
+    <Breadcrumb current="Disclaimer" />
+    <h1>Disclaimer</h1>
+  </header>
+  <article class="prose">
+    <h2>Are these calculators an approval to build?</h2>
+    <p>
+      No. These four calculators are planning estimates for gravel, mulch, topsoil, and sod.
+      They are not engineering, a drainage design, a planting plan, or a substitute for the
+      product instructions. For safety, drainage, or structural decisions, check with a qualified
+      professional and with the supplier who will sell the material.
+    </p>
+    <h2>What does the gravel calculator not decide?</h2>
+    <p>
+      The <a href="/gravel-calculator/">gravel calculator</a> multiplies the area and depth you type,
+      then applies the allowance and density you enter. It does not choose a driveway section, a
+      compacted thickness, or a stone gradation. Two inches of decorative gravel is not a base that
+      will carry a car.
+    </p>
+    <h2>What does the mulch calculator not decide?</h2>
+    <p>
+      The <a href="/mulch-calculator/">mulch calculator</a> estimates volume and bags for the depth
+      you enter. It does not tell you to stack a new layer on mulch that is already deep enough,
+      and it does not approve mulch piled against a trunk.
+    </p>
+    <h2>What does the topsoil calculator not decide?</h2>
+    <p>
+      The <a href="/topsoil-calculator/">topsoil calculator</a> estimates yards, tons, and bags from
+      the depth and density you enter. It does not test the soil, choose a blend, or decide whether
+      a truck can haul the weight. Read the payload sticker on the door.
+    </p>
+    <h2>What does the sod calculator not decide?</h2>
+    <p>
+      The <a href="/sod-calculator/">sod calculator</a> turns an area into pallets and rolls using
+      sizes you type. It does not choose a grass variety, a soil prep, or an install date. A pallet
+      of fresh sod is a heavy, perishable load. Ask the farm before you pay for a pallet that would
+      be mostly empty.
+    </p>
+    <h2>What do I still need to check?</h2>
+    <p>
+      Check the measurements, the product data, and the supplier order rules. Moisture, compaction,
+      and site conditions can differ from a planning formula. This page is not a terms-of-use
+      contract. The <a href="/terms/">terms</a> cover use of the site. Neither page chooses a
+      governing law, and neither is a legal review.
+    </p>
+  </article>
+</BaseLayout>

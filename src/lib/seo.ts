@@ -6,37 +6,49 @@ export interface Faq {
   answer: string;
 }
 
+export interface HowToStep {
+  text: string;
+}
+
+const personId = `${site.url}/about/#person`;
+
 export function calculatorJsonLd(input: {
   name: string;
   description: string;
   pathname: string;
+  answer: string;
   faqs: readonly Faq[];
+  howTo: { name: string; steps: readonly HowToStep[] };
 }) {
   const url = pageUrl(input.pathname);
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": ["WebApplication", "SoftwareApplication"],
         name: input.name,
         url,
-        description: input.description,
+        description: input.answer,
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
-        browserRequirements:
-          "Requires JavaScript to recalculate. The example result is included in the page HTML.",
+        operatingSystem: "Web browser",
+        browserRequirements: "Requires JavaScript",
+        isAccessibleForFree: true,
         offers: {
           "@type": "Offer",
           price: "0",
           priceCurrency: "USD",
         },
-        isAccessibleForFree: true,
         inLanguage: "en-US",
-        provider: {
-          "@type": "Organization",
-          name: site.legalName,
-          url: `${site.url}/`,
-        },
+      },
+      {
+        "@type": "HowTo",
+        name: input.howTo.name,
+        inLanguage: "en-US",
+        step: input.howTo.steps.map((step, index) => ({
+          "@type": "HowToStep",
+          position: index + 1,
+          text: step.text,
+        })),
       },
       {
         "@type": "FAQPage",
@@ -60,15 +72,12 @@ export function homeJsonLd() {
     "@graph": [
       {
         "@type": "WebSite",
+        "@id": `${site.url}/#website`,
         name: site.legalName,
         url: `${site.url}/`,
         description: site.description,
         inLanguage: "en-US",
-        publisher: {
-          "@type": "Organization",
-          name: site.legalName,
-          url: `${site.url}/`,
-        },
+        publisher: { "@id": personId },
       },
       {
         "@type": "ItemList",
@@ -84,25 +93,80 @@ export function homeJsonLd() {
   };
 }
 
-export function webPageJsonLd(title: string, description: string, pathname: string) {
-  const url = pageUrl(pathname);
+export function webPageJsonLd(input: {
+  title: string;
+  description: string;
+  pathname: string;
+  breadcrumb: string;
+}) {
+  const url = pageUrl(input.pathname);
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: title,
-        description,
+        name: input.title,
+        description: input.description,
         url,
         inLanguage: "en-US",
         isPartOf: {
-          "@type": "WebSite",
-          name: site.legalName,
-          url: `${site.url}/`,
+          "@id": `${site.url}/#website`,
         },
       },
-      breadcrumb(title, url),
+      breadcrumb(input.breadcrumb, url),
     ],
+  };
+}
+
+export function aboutJsonLd(description: string) {
+  const url = pageUrl("/about/");
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: "About This US Landscaping Calculator",
+        description,
+        inLanguage: "en-US",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": personId },
+      },
+      personNode(),
+      breadcrumb("About", url),
+    ],
+  };
+}
+
+export function contactJsonLd(description: string) {
+  const url = pageUrl("/contact/");
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: "Contact Abdul Rauf | Landscaping Calculators",
+        description,
+        inLanguage: "en-US",
+        isPartOf: { "@id": `${site.url}/#website` },
+        mainEntity: { "@id": personId },
+      },
+      personNode(),
+      breadcrumb("Contact", url),
+    ],
+  };
+}
+
+function personNode() {
+  return {
+    "@type": "Person",
+    "@id": personId,
+    name: site.publisherName,
+    email: site.contact.email,
+    url: pageUrl("/about/"),
   };
 }
 

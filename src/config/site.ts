@@ -1,11 +1,9 @@
 /**
  * Public site origin. This is the only place the site URL is defined.
  * Canonical links, Open Graph URLs, the sitemap, robots.txt, and JSON-LD
- * all read `siteUrl`. No trailing slash.
- *
- * Replace it when the Cloudflare custom domain is connected, then rebuild.
+ * all read `siteUrl`. Apex host, no www, no trailing slash.
  */
-export const siteUrl = "https://example.com";
+export const siteUrl = "https://landscapecalcpro.com";
 
 export const site = {
   url: siteUrl,
@@ -13,13 +11,13 @@ export const site = {
   legalName: "Yardwork Calculators",
   tagline: "Free US calculators for gravel, mulch, topsoil, and sod.",
   description:
-    "Free US landscaping calculators for gravel, mulch, topsoil, and sod. Estimate cubic yards, short tons, bags, pallets, and material cost.",
+    "Free US calculators for gravel, mulch, topsoil, and sod. Estimate cubic yards, short tons, bags, pallets, and a material cost from your own price.",
   locale: "en_US",
   language: "en-US",
   updatedLabel: "November 16, 2026",
+  publisherName: "Abdul Rauf",
   contact: {
-    email: "contact@example.com",
-    mailingAddress: "TODO: street address, city, ST 00000, United States",
+    email: "r.rauf.rai@gmail.com",
   },
 } as const;
 

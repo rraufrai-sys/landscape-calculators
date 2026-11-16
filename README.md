@@ -14,15 +14,15 @@ npm test
 npm run dev
 ```
 
-`npm run dev` serves the site at <http://localhost:4321>. `npm run build` writes the static site to `dist/`. `npm run preview` serves that build. `npm run check` typechecks the project.
+`npm run dev` serves the site at <http://localhost:4321>. `npm run build` writes the static site to `dist/`. `npm run preview` serves that build. `npm run check` typechecks the project. `npm run seo` checks the built HTML and must run after `npm run build`.
 
 ## Site URL
 
-The public origin is one value, `siteUrl`, in [`src/config/site.ts`](src/config/site.ts). Canonical links, Open Graph URLs, JSON-LD, the sitemap, and `robots.txt` all read it. There is no trailing slash.
+The public origin is one value, `siteUrl`, in [`src/config/site.ts`](src/config/site.ts): `https://landscapecalcpro.com`. That is the apex host, with no `www` and no trailing slash. Canonical links, Open Graph URLs, JSON-LD, the sitemap, and `robots.txt` all read it.
 
-It is `https://example.com` until the domain is connected. Change that constant and rebuild before launch. Do not also hardcode the host anywhere else.
+`www.landscapecalcpro.com` is not a second copy of the site. [`worker.js`](worker.js) answers that hostname with a 301 to the same path and query on `https://landscapecalcpro.com`. The apex host, `workers.dev`, and pull-request preview URLs are served as normal.
 
-The contact email and mailing address live in the same file. They are placeholders and are marked TODO on the contact page. Replace them before you publish or apply for AdSense.
+The public email is `r.rauf.rai@gmail.com`, on the contact page. Abdul Rauf publishes the site as a personal project. There is no company, street address, or phone.
 
 ## Calculators
 
@@ -39,9 +39,9 @@ Formulas, coverage identity (one cubic yard, one inch deep, covers 324 square fe
 
 ## Cloudflare
 
-New sites on Cloudflare should use [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), not a new Pages project. This repo is an assets-only Worker: Astro pre-renders every page, so [`wrangler.jsonc`](wrangler.jsonc) has no Worker script. It points at `./dist`, serves `404.html` for unknown URLs (`not_found_handling: "404-page"`), and uses trailing-slash HTML handling that matches the build.
+New sites on Cloudflare should use [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/). [`wrangler.jsonc`](wrangler.jsonc) keeps the Worker name `landscape-calculators`, points `main` at `worker.js`, and serves `./dist`. The Worker runs before static assets (`run_worker_first`) so a www request cannot be answered by the HTML with status 200. Unknown paths still use `404.html` (`not_found_handling: "404-page"`).
 
-`public/_headers` and `public/_redirects` are copied into the build. Headers set a strict content security policy (no third-party scripts), and they send `X-Robots-Tag: noindex` on `*.workers.dev` and `*.pages.dev` hostnames so the preview host does not compete with the domain once `siteUrl` is real.
+`public/_headers` and `public/_redirects` are copied into the build. Headers set a strict content security policy (no third-party scripts), and they send `X-Robots-Tag: noindex` on `*.workers.dev` and `*.pages.dev` hostnames. `public/.assetsignore` keeps repo files such as the readme, Worker config, and scripts out of the upload if they ever land in `dist`.
 
 ### Deploy from your machine
 
@@ -57,7 +57,7 @@ npm run build
 npx wrangler deploy --dry-run
 ```
 
-After the first deploy, attach the domain in the Workers dashboard (Workers & Pages → the Worker → Settings → Domains & Routes), or with `routes` in `wrangler.jsonc` once the hostname exists. Then set `siteUrl` to `https://your-domain` and deploy again so the canonical host matches the domain.
+Attach both `landscapecalcpro.com` and `www.landscapecalcpro.com` to the `landscape-calculators` Worker. The www hostname redirects. The apex hostname serves the pages.
 
 ### Workers Builds (deploy from GitHub)
 

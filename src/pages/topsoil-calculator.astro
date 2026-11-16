@@ -2,6 +2,7 @@
 import AdSlot from "../components/AdSlot.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import FaqList from "../components/FaqList.astro";
+import Limitations from "../components/Limitations.astro";
 import RelatedTools from "../components/RelatedTools.astro";
 import VolumeCalculator from "../components/VolumeCalculator.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -10,9 +11,17 @@ import { soilBags, soilPresets, presetById } from "../lib/calc";
 import { cubicYardsForArea, formatNumber, unwrap, volumeOrderFromFields } from "../lib/calc";
 import { calculatorJsonLd, type Faq } from "../lib/seo";
 
-const title = "Topsoil Calculator — Soil Yards, Tons, and Bags | Yardwork";
+const title = "Topsoil Calculator: Cubic Yards, Tons, and Bags";
 const description =
-  "Calculate topsoil and garden soil in cubic yards, short tons, and bags. For raised beds, new beds, and thin lawn topdressing.";
+  "Topsoil calculator for cubic yards, short tons, and bags of soil. Use it for a raised bed, a new bed, or a thin lawn topdressing.";
+const answer =
+  "Multiply the area in square feet by the depth in inches and divide by 324 to get cubic yards. One cubic yard is 27 cubic feet. At the screened topsoil preset, that yard weighs about 1.08 short tons. Volume bags follow cubic feet, and a 40 pound count follows the density.";
+const howToName = "How do I use this topsoil calculator?";
+const howToSteps = [
+  "Enter the inside length and width of the bed, or the lawn area you will cover.",
+  "Enter the depth you will actually place. A live lawn wants a fraction of an inch, not a garden-bed depth.",
+  "Keep or change the 10 percent settling allowance, and edit the density if the supplier printed one.",
+];
 const pathname = "/topsoil-calculator/";
 const preset = presetById(soilPresets, soilExample.presetId);
 const example = unwrap(
@@ -73,16 +82,19 @@ const faqs: Faq[] = [
 <BaseLayout
   title={title}
   description={description}
-  jsonLd={calculatorJsonLd({ name: "Topsoil calculator", description, pathname, faqs })}
+  jsonLd={calculatorJsonLd({
+    name: "Topsoil Calculator",
+    description,
+    pathname,
+    answer,
+    faqs,
+    howTo: { name: howToName, steps: howToSteps.map((text) => ({ text })) },
+  })}
 >
   <header class="page-intro">
-    <Breadcrumb current="Topsoil calculator" />
-    <h1>Topsoil calculator</h1>
-    <p class="lede">
-      A soil calculator for cubic yards, short tons, and bags. Use it for screened topsoil, a
-      garden blend, or fill dirt. The right depth depends on whether you are topdressing a lawn,
-      filling a bed, or raising a grade.
-    </p>
+    <Breadcrumb current="Topsoil Calculator" />
+    <p class="eyebrow">United States · feet and inches · US dollars</p>
+    <h1>Topsoil Calculator</h1>
   </header>
 
   <div class="calculator-wrap">
@@ -100,10 +112,15 @@ const faqs: Faq[] = [
     />
   </div>
 
-  <AdSlot slotId="soil-rectangle" />
-
-  <article class="prose">
-    <h2>Choose the depth for the job</h2>
+  <article class="prose guide">
+    <h2>How much topsoil do I need?</h2>
+    <p class="answer">{answer}</p>
+    <h2>{howToName}</h2>
+    <ol class="howto">
+      {howToSteps.map((step) => <li>{step}</li>)}
+    </ol>
+    <AdSlot slotId="soil-rectangle" />
+    <h2 id="how-to-measure">How deep should the soil be?</h2>
     <ul>
       <li>
         <strong>Topdressing a lawn.</strong> About 1/4 to 1/2 inch. Deeper than that buries the
@@ -147,7 +164,7 @@ const faqs: Faq[] = [
       </table>
     </div>
 
-    <h2>Tons and bags</h2>
+    <h2 id="formula">How do tons and bags follow from the yards?</h2>
     <p>
       Screened topsoil starts at 80 pounds per cubic foot, in line with the Engineering Toolbox
       figures for loam (80) and loose moist dirt (78). A cubic yard at that density weighs
@@ -167,7 +184,7 @@ const faqs: Faq[] = [
       volume. Use the printed volume when it is there.
     </p>
 
-    <h2>The example loaded in the form</h2>
+    <h2 id="example">What does the example in the form come out to?</h2>
     <p>
       A {soilExample.secondary} by {soilExample.primary} foot bed filled
       {soilExample.depthInches} inches is {formatNumber(example.areaSqFt, 0)} square feet times 1
@@ -189,5 +206,6 @@ const faqs: Faq[] = [
     <AdSlot slotId="soil-banner" size="banner" />
     <FaqList faqs={faqs} />
     <RelatedTools current={pathname} />
+    <Limitations />
   </article>
 </BaseLayout>

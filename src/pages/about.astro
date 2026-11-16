@@ -2,62 +2,52 @@
 import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../config/site";
-import { webPageJsonLd } from "../lib/seo";
+import { aboutJsonLd } from "../lib/seo";
 
-const title = "About Yardwork Calculators";
+const title = "About This US Landscaping Calculator";
 const description =
-  "Yardwork Calculators estimates gravel, mulch, topsoil, and sod for US yards. Formulas and densities are published, and every density can be edited.";
-const pathname = "/about/";
+  "Abdul Rauf publishes these free US calculators for gravel, mulch, topsoil, and sod. This is a personal site, not a company, with no street address or phone.";
 ---
 
-<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+<BaseLayout title={title} description={description} jsonLd={aboutJsonLd(description)}>
   <header class="page-intro">
     <Breadcrumb current="About" />
     <h1>About</h1>
-    <p class="lede">{site.tagline}</p>
   </header>
   <article class="prose">
+    <h2>What is this landscaping calculator site?</h2>
     <p>
-      Yardwork is a set of calculators for people ordering landscape material in the United States:
-      homeowners measuring a bed, and anyone else who has a length, a width, and a depth and needs
-      cubic yards before calling a supplier. The first version covers gravel, mulch, topsoil, and
-      sod.
+      It is a set of four free calculators that run in the browser, for common ordering questions
+      about landscape material in US units. Lengths are in feet. Depth is in inches. Volume is in
+      cubic feet and cubic yards. One cubic yard is 27 cubic feet. Prices, where a page asks for
+      them, are in US dollars. Weight is in pounds and US short tons. A short ton is 2,000 pounds.
     </p>
+    <h2>Who publishes it?</h2>
     <p>
-      US customary units are the default because that is how the material is sold: cubic yards,
-      short tons of 2,000 pounds, half-cubic-foot bags of stone, 2 and 3 cubic foot bags of mulch,
-      and sod by the square foot and the pallet. A metric switch converts the measurements you
-      type. The order units stay in the result.
+      {site.publisherName} publishes these pages. This is a personal site, not a company.
+      There is no street address, phone number, or professional credential listed here.
+      The public email is {site.contact.email}, on the <a href="/contact/">Contact</a> page.
+      The site does not claim a ranking or an endorsement.
     </p>
-    <h2>What you can check</h2>
+    <h2>What are the four calculators?</h2>
+    <ul>
+      <li><a href="/gravel-calculator/">Gravel calculator</a> for cubic yards, short tons, and bags of pea gravel, crushed stone, river rock, and a few other stones, with a density you can edit.</li>
+      <li><a href="/mulch-calculator/">Mulch calculator</a> for cubic yards and for bags of 2 and 3 cubic feet, with a 2 to 4 inch depth guide for beds and trees.</li>
+      <li><a href="/topsoil-calculator/">Topsoil calculator</a> for cubic yards, short tons, and bags of screened topsoil, garden mix, or fill dirt.</li>
+      <li><a href="/sod-calculator/">Sod calculator</a> for square feet, pallets, and rolls, using a pallet size and roll size you can change to match the farm.</li>
+    </ul>
+    <h2>How are the numbers handled?</h2>
     <p>
-      Each result includes the working, in the same order as the arithmetic: area, depth, net
-      volume, allowance, density, weight, then bags or rolls. The
+      Each result includes the working, in the same order as the arithmetic. The
       <a href="/methodology/">methodology</a> lists the formulas and the density behind every
-      preset, with the reference it came from. Where a number is a midpoint of a published range
-      rather than a single table value, the page says so.
+      preset, with the reference it came from. A preset is a planning figure. The number on a
+      supplier ticket replaces it.
     </p>
     <p>
-      Densities are editable because moisture and the quarry move the weight. A preset gets the
-      estimate started. The figure on a supplier’s ticket replaces it. Changing the material menu
-      fills the preset back in, which the form tells you before you do it.
+      None of the calculators chooses a driveway section, a drainage layout, or a planting plan.
+      Those decisions stay with you, your supplier, or a qualified professional. The
+      <a href="/disclaimer/">disclaimer</a> states that limit for all four pages.
     </p>
-    <h2>What this site does not do</h2>
-    <p>
-      It does not specify a driveway section, a wall, a drainage system, or a planting plan. Depth
-      notes on the calculator pages are ordering guidance, and the driveway note is there to stop
-      a 2 inch decorative calculation from being used as a base. It does not account for delivery
-      minimums, tax, or the payload of a particular truck beyond showing the weight and telling you
-      to read the sticker on the door.
-    </p>
-    <p>
-      The calculators run in the browser on a static page. The measurements are not uploaded.
-      There is no account. Contact details are on the <a href="/contact/">contact page</a>, and
-      they are still placeholders until this site is published under its own name and address.
-    </p>
-    <p>
-      Material presets are reference figures, not paid placements. No supplier is featured, and
-      the calculators do not send you to a store.
-    </p>
+    <p>Last updated {site.updatedLabel}.</p>
   </article>
 </BaseLayout>

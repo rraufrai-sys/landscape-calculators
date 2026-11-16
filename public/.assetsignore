@@ -1,0 +1,23 @@
+# Files that should not be part of the public site if they land in dist.
+# The Worker script and repo docs stay outside this folder.
+
+.git
+.gitignore
+.assetsignore
+.wrangler
+.github
+node_modules
+
+wrangler.jsonc
+wrangler.toml
+worker.js
+package.json
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+README.md
+*.md
+scripts
+seo-check.cjs
+*.map

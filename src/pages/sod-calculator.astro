@@ -2,6 +2,7 @@
 import AdSlot from "../components/AdSlot.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import FaqList from "../components/FaqList.astro";
+import Limitations from "../components/Limitations.astro";
 import RelatedTools from "../components/RelatedTools.astro";
 import SodCalculator from "../components/SodCalculator.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -9,9 +10,17 @@ import { sodExample } from "../config/examples";
 import { formatNumber, sodOrderFromFields, unwrap } from "../lib/calc";
 import { calculatorJsonLd, type Faq } from "../lib/seo";
 
-const title = "Sod Calculator — Square Feet, Pallets, and Rolls | Yardwork";
+const title = "Sod Calculator: Square Feet, Pallets, and Rolls";
 const description =
-  "Calculate sod in square feet, pallets, and rolls. Change the pallet size, roll size, and waste allowance, then estimate the material cost.";
+  "Sod calculator for square feet, pallets, and rolls. Change the pallet size, roll size, and waste allowance, then estimate the material cost.";
+const answer =
+  "Measure the lawn in square feet, then add a waste allowance for the pieces you cut off. Divide the order area by the pallet size and by the roll size. Both counts round up. A common US pallet is about 450 square feet of 10 square foot rolls.";
+const howToName = "How do I use this sod calculator?";
+const howToSteps = [
+  "Enter the length and width of the lawn, or a circle or triangle when that matches the shape.",
+  "Set the waste allowance. About 5 percent fits a simple rectangle. Curves often need closer to 10 percent.",
+  "Match the pallet size and roll size to the farm ticket. The defaults are 450 and 10 square feet.",
+];
 const pathname = "/sod-calculator/";
 const example = unwrap(
   sodOrderFromFields({
@@ -56,14 +65,22 @@ const faqs: Faq[] = [
 ];
 ---
 
-<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Sod calculator", description, pathname, faqs })}>
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={calculatorJsonLd({
+    name: "Sod Calculator",
+    description,
+    pathname,
+    answer,
+    faqs,
+    howTo: { name: howToName, steps: howToSteps.map((text) => ({ text })) },
+  })}
+>
   <header class="page-intro">
-    <Breadcrumb current="Sod calculator" />
-    <h1>Sod calculator</h1>
-    <p class="lede">
-      Turn a lawn measurement into square feet, pallets, and rolls. Pallet and roll sizes are
-      editable because they are sales units, not physical constants.
-    </p>
+    <Breadcrumb current="Sod Calculator" />
+    <p class="eyebrow">United States · feet and inches · US dollars</p>
+    <h1>Sod Calculator</h1>
   </header>
 
   <div class="calculator-wrap">
@@ -77,10 +94,15 @@ const faqs: Faq[] = [
     />
   </div>
 
-  <AdSlot slotId="sod-rectangle" />
-
-  <article class="prose">
-    <h2>How to measure the lawn</h2>
+  <article class="prose guide">
+    <h2>How much sod do I need?</h2>
+    <p class="answer">{answer}</p>
+    <h2>{howToName}</h2>
+    <ol class="howto">
+      {howToSteps.map((step) => <li>{step}</li>)}
+    </ol>
+    <AdSlot slotId="sod-rectangle" />
+    <h2 id="how-to-measure">How do I measure the lawn?</h2>
     <ul>
       <li>Rectangle: the two sides of the area that will be sod, not the whole lot if beds and walks cut into it.</li>
       <li>More than one shape: calculate each piece and add the square feet. A front lawn that is a rectangle with a half-round walk can be a rectangle plus a circle, with the walk subtracted if you measure it separately.</li>
@@ -92,7 +114,7 @@ const faqs: Faq[] = [
       which is how the farms sell them. The result still shows square meters of the measured area.
     </p>
 
-    <h2>Pallets, rolls, and the awkward extra pallet</h2>
+    <h2 id="formula">How do pallets and rolls follow from the square feet?</h2>
     <p>
       Many farms in the US sell a pallet as about {sodExample.sqFtPerPallet} square feet of rolls
       around {sodExample.sqFtPerPiece} square feet each. Others sell 400 or 500 square feet, or cut
@@ -111,7 +133,7 @@ const faqs: Faq[] = [
       down, the same day.
     </p>
 
-    <h2>The example loaded in the form</h2>
+    <h2 id="example">What does the example in the form come out to?</h2>
     <p>
       A {sodExample.primary} by {sodExample.secondary} foot rectangle is
       {formatNumber(example.areaSqFt, 0)} square feet, which is
@@ -136,5 +158,6 @@ const faqs: Faq[] = [
     <AdSlot slotId="sod-banner" size="banner" />
     <FaqList faqs={faqs} />
     <RelatedTools current={pathname} />
+    <Limitations />
   </article>
 </BaseLayout>

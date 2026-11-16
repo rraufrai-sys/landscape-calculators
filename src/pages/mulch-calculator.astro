@@ -2,6 +2,7 @@
 import AdSlot from "../components/AdSlot.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import FaqList from "../components/FaqList.astro";
+import Limitations from "../components/Limitations.astro";
 import RelatedTools from "../components/RelatedTools.astro";
 import VolumeCalculator from "../components/VolumeCalculator.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -10,9 +11,17 @@ import { mulchBags, mulchPresets, presetById } from "../lib/calc";
 import { formatNumber, sqFtPerCubicYard, unwrap, volumeOrderFromFields } from "../lib/calc";
 import { calculatorJsonLd, type Faq } from "../lib/seo";
 
-const title = "Mulch Calculator — Cubic Yards and Bags | Yardwork";
+const title = "Mulch Calculator: Cubic Yards and Bags";
 const description =
-  "Calculate mulch in cubic yards and in bags of 2 and 3 cubic feet. Includes a depth guide for beds and trees and an optional material cost.";
+  "Mulch calculator for cubic yards and for bags of 2 and 3 cubic feet. See how deep to mulch a bed and what one yard covers at that depth.";
+const answer =
+  "Multiply the bed in square feet by the depth in inches and divide by 324. At 3 inches, one cubic yard covers 108 square feet. A cubic yard is 27 cubic feet, which is 13.5 bags of 2 cubic feet or 9 bags of 3 cubic feet before rounding up.";
+const howToName = "How do I use this mulch calculator?";
+const howToSteps = [
+  "Enter the length and width of the bed, or a circle or triangle if that matches the shape.",
+  "Enter the depth you still need to add, usually 2 to 4 inches, and keep mulch off trunks.",
+  "Leave the allowance at 0 for a simple rectangle, or add 5 to 10 percent for curves. Results update as you type.",
+];
 const pathname = "/mulch-calculator/";
 const preset = presetById(mulchPresets, mulchExample.presetId);
 const example = unwrap(
@@ -65,14 +74,22 @@ const faqs: Faq[] = [
 ];
 ---
 
-<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Mulch calculator", description, pathname, faqs })}>
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={calculatorJsonLd({
+    name: "Mulch Calculator",
+    description,
+    pathname,
+    answer,
+    faqs,
+    howTo: { name: howToName, steps: howToSteps.map((text) => ({ text })) },
+  })}
+>
   <header class="page-intro">
-    <Breadcrumb current="Mulch calculator" />
-    <h1>Mulch calculator</h1>
-    <p class="lede">
-      Estimate cubic yards of mulch and the number of 2 cubic foot and 3 cubic foot bags. The
-      depth guide below is the part that keeps a bed from becoming a mulch volcano.
-    </p>
+    <Breadcrumb current="Mulch Calculator" />
+    <p class="eyebrow">United States · feet and inches · US dollars</p>
+    <h1>Mulch Calculator</h1>
   </header>
 
   <div class="calculator-wrap">
@@ -90,10 +107,15 @@ const faqs: Faq[] = [
     />
   </div>
 
-  <AdSlot slotId="mulch-rectangle" />
-
-  <article class="prose">
-    <h2>How deep mulch should be</h2>
+  <article class="prose guide">
+    <h2>How much mulch do I need?</h2>
+    <p class="answer">{answer}</p>
+    <h2>{howToName}</h2>
+    <ol class="howto">
+      {howToSteps.map((step) => <li>{step}</li>)}
+    </ol>
+    <AdSlot slotId="mulch-rectangle" />
+    <h2 id="how-to-measure">How deep should mulch be?</h2>
     <p>
       For trees and shrubs, a 2 to 4 inch layer is the range repeated across university extension
       publications. Penn State Extension says to apply 2 to 4 inches and no more, and to use less
@@ -116,7 +138,7 @@ const faqs: Faq[] = [
       whole job.
     </p>
 
-    <h2>How much ground a yard covers</h2>
+    <h2 id="formula">How much ground does one cubic yard cover?</h2>
     <p>
       One cubic yard is 27 cubic feet. At 1 inch deep it covers 324 square feet. Divide 324 by the
       depth in inches.
@@ -149,7 +171,7 @@ const faqs: Faq[] = [
       the price-per-yard field is there for that quote.
     </p>
 
-    <h2>How to measure a bed</h2>
+    <h2>How do I measure a bed?</h2>
     <ul>
       <li>Rectangle: length times width of the bed, not of the whole yard.</li>
       <li>A bed around a tree: measure the ring as a circle using the outer diameter, then subtract the open circle you leave around the trunk. Run the calculator twice and subtract the cubic yards.</li>
@@ -157,7 +179,7 @@ const faqs: Faq[] = [
       <li>Curves: a 5 to 10 percent allowance covers the extra you use working around edges. The sample bed uses 0 percent because it is a clean rectangle.</li>
     </ul>
 
-    <h2>The example loaded in the form</h2>
+    <h2 id="example">What does the example in the form come out to?</h2>
     <p>
       A {mulchExample.primary} by {mulchExample.secondary} foot bed at {mulchExample.depthInches} inches
       is {formatNumber(example.areaSqFt, 0)} square feet. That depth is exactly one quarter of a
@@ -179,5 +201,6 @@ const faqs: Faq[] = [
     <AdSlot slotId="mulch-banner" size="banner" />
     <FaqList faqs={faqs} />
     <RelatedTools current={pathname} />
+    <Limitations />
   </article>
 </BaseLayout>

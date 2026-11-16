@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "vitest run",
+    "seo": "node scripts/seo-check.cjs",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {

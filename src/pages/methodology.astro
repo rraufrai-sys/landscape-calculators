@@ -19,9 +19,9 @@ import { formatNumber } from "../lib/calc";
 import { site } from "../config/site";
 import { webPageJsonLd } from "../lib/seo";
 
-const title = "Methodology — Formulas and Densities | Yardwork";
+const title = "Formulas and Densities | Landscaping Calculators";
 const description =
-  "Formulas, unit conversions, and bulk densities behind the Yardwork gravel, mulch, topsoil, and sod calculators, with the reference for each figure.";
+  "Formulas, unit conversions, and bulk densities behind the gravel, mulch, topsoil, and sod calculators, with the reference for each figure.";
 const pathname = "/methodology/";
 
 const groups: { heading: string; presets: readonly DensityPreset[] }[] = [
@@ -31,7 +31,7 @@ const groups: { heading: string; presets: readonly DensityPreset[] }[] = [
 ];
 ---
 
-<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd({ title, description, pathname, breadcrumb: "Methodology" })}>
   <header class="page-intro">
     <Breadcrumb current="Methodology" />
     <h1>Methodology</h1>

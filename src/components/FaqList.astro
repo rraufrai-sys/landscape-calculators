@@ -6,10 +6,10 @@ interface Props {
   heading?: string;
 }
 
-const { faqs, heading = "Common questions" } = Astro.props;
+const { faqs, heading = "What are the common questions?" } = Astro.props;
 ---
 
-<section class="faq" aria-labelledby="faq-heading">
+<section class="faq" id="faq" aria-labelledby="faq-heading">
   <h2 id="faq-heading">{heading}</h2>
   {
     faqs.map((faq) => (
