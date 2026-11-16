@@ -1,0 +1,24 @@
+---
+import { tools } from "../config/tools";
+
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
+const others = tools.filter((tool) => tool.href !== current);
+---
+
+<section aria-labelledby="related-heading">
+  <h2 id="related-heading">Other calculators</h2>
+  <ul class="related">
+    {
+      others.map((tool) => (
+        <li>
+          <a href={tool.href}>{tool.name}</a>
+          <span>: {tool.summary}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>

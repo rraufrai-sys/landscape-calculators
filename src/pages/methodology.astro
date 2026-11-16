@@ -1,0 +1,219 @@
+---
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  CENTIMETERS_PER_INCH,
+  CUBIC_FEET_PER_CUBIC_YARD,
+  gravelPresets,
+  kilogramsPerCubicMeter,
+  KILOGRAMS_PER_POUND,
+  METERS_PER_FOOT,
+  mulchPresets,
+  POUNDS_PER_SHORT_TON,
+  soilPresets,
+  SQUARE_FEET_PER_CUBIC_YARD_AT_ONE_INCH,
+  tonsPerCubicYard,
+  type DensityPreset,
+} from "../lib/calc";
+import { formatNumber } from "../lib/calc";
+import { site } from "../config/site";
+import { webPageJsonLd } from "../lib/seo";
+
+const title = "Methodology — Formulas and Densities | Yardwork";
+const description =
+  "Formulas, unit conversions, and bulk densities behind the Yardwork gravel, mulch, topsoil, and sod calculators, with the reference for each figure.";
+const pathname = "/methodology/";
+
+const groups: { heading: string; presets: readonly DensityPreset[] }[] = [
+  { heading: "Gravel and stone", presets: gravelPresets },
+  { heading: "Mulch", presets: mulchPresets },
+  { heading: "Soil", presets: soilPresets },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+  <header class="page-intro">
+    <Breadcrumb current="Methodology" />
+    <h1>Methodology</h1>
+    <p class="lede">
+      The calculators share one module. These are the formulas, the rounding rules, and the
+      densities, including where each density comes from and where it is only a planning midpoint.
+    </p>
+  </header>
+  <article class="prose">
+    <p>Last updated {site.updatedLabel}.</p>
+
+    <h2>Area</h2>
+    <ul>
+      <li>Rectangle: length × width.</li>
+      <li>Circle: π × (diameter ÷ 2)². The field asks for the diameter because that is the distance across.</li>
+      <li>Triangle: ½ × base × height, with height measured square to the base.</li>
+    </ul>
+    <p>
+      US lengths are in feet. Metric lengths are in meters and are converted with the international
+      foot, exactly {METERS_PER_FOOT} meters. One square meter is
+      {formatNumber(1 / METERS_PER_FOOT ** 2, 4)} square feet.
+    </p>
+
+    <h2>Volume</h2>
+    <p>
+      Depth in inches is divided by 12 to get feet. Depth in centimeters is divided by 100 to get
+      meters. Volume is area times that depth.
+    </p>
+    <ul>
+      <li>1 cubic yard = {CUBIC_FEET_PER_CUBIC_YARD} cubic feet.</li>
+      <li>1 inch of depth over 1 square foot is 1/12 cubic foot.</li>
+      <li>
+        One cubic yard spread 1 inch deep covers {SQUARE_FEET_PER_CUBIC_YARD_AT_ONE_INCH} square
+        feet, because 27 × 12 = 324. Coverage at any depth is 324 ÷ depth in inches.
+      </li>
+      <li>1 inch = {CENTIMETERS_PER_INCH} centimeters, exactly.</li>
+    </ul>
+    <p>
+      Cubic meters are converted from cubic feet with the cube of {METERS_PER_FOOT}. The metric
+      toggle changes the fields you type into. Yards, short tons, and US bag sizes stay in the
+      result because that is how the material is sold here.
+    </p>
+
+    <h2>Allowance</h2>
+    <p>
+      The allowance is a percent added to the net volume or area. Ten percent multiplies the result
+      by 1.10. It is capped at 100 percent. Zero is allowed.
+    </p>
+    <p>
+      For decorative gravel and for mulch, treat it as waste: spillage, odd edges, and a thin spot.
+      For crusher run, decomposed granite, and other base that will be compacted, the finished
+      thickness is less than the loose thickness, so the allowance is doing more work. It is not a
+      Proctor compaction test. If a specification calls for a compacted depth, ask how much loose
+      material that depth requires.
+    </p>
+    <p>
+      Soil uses the same multiplier for settling after watering. Sod uses it for pieces cut off
+      along edges and curves. Mulch does not need a compaction factor.
+    </p>
+
+    <h2>Weight</h2>
+    <p>
+      Short tons = cubic feet × pounds per cubic foot ÷ {POUNDS_PER_SHORT_TON.toLocaleString("en-US")}.
+      A short ton is 2,000 pounds. A metric tonne is 1,000 kilograms. The pound used in the
+      conversion is the international avoirdupois pound, exactly {KILOGRAMS_PER_POUND} kilograms.
+      Metric tonnes in the result are that conversion of the pound weight, not a second density.
+    </p>
+    <p>
+      Tons per cubic yard = pounds per cubic foot × 27 ÷ 2,000. At 100 pounds per cubic foot, a
+      cubic yard is exactly 1.35 short tons. At about 74 pounds per cubic foot, a cubic yard and a
+      short ton are the same weight. Ordinary gravel and topsoil are heavier than that, which is
+      why a ton and a yard are different orders.
+    </p>
+
+    <h2>Bags, pallets, and money</h2>
+    <p>
+      A volume bag count is ordered cubic feet divided by the bag’s cubic feet. A weight bag count
+      is ordered pounds divided by the bag’s pounds. Pallet and roll counts are ordered square feet
+      divided by the size you enter. Anything that is not already a whole number rounds up to the
+      next whole bag, pallet, or roll, because that is what you have to buy. Exact values are shown
+      in the working so you can see how much the rounding added.
+    </p>
+    <p>
+      A price per cubic yard is multiplied by ordered yards. A price per short ton is multiplied by
+      ordered tons. A price per bag is multiplied by the rounded-up bag count. A sod price per
+      square foot uses the order area, and a price per pallet uses whole pallets. Each price is a
+      separate estimate. Delivery, tax, fabric, edging, and labor are not included. Displayed money
+      is rounded to the cent.
+    </p>
+
+    <h2>Densities</h2>
+    <p>
+      Bulk density changes with moisture, particle size, and how tightly the load is packed. The
+      presets are loose planning figures. They are not a lab report for the pile on a particular
+      truck. The Engineering Toolbox table for
+      <a href="https://www.engineeringtoolbox.com/dirt-mud-densities-d_1727.html">dirt and mud densities</a>
+      lists gravel at 105 pounds per cubic foot dry and 125 wet, sand at 97 dry and 119 wet, loam
+      at 80, loose dry dirt at 76, and loose moist dirt at 78. Its
+      <a href="https://www.engineeringtoolbox.com/density-materials-d_1652.html">common-products table</a>
+      lists bark and wood refuse at 10 to 20 pounds per cubic foot. Kilograms per cubic meter on
+      this site are converted from the pound figure, so they can differ by a rounding step from a
+      table that prints both units.
+    </p>
+    {
+      groups.map((group) => (
+        <div class="table-wrap">
+          <table>
+            <caption>{group.heading}</caption>
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th class="num">lb/cu ft</th>
+                <th class="num">tons/cu yd</th>
+                <th class="num">kg/cu m</th>
+                <th>Published range</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.presets.map((preset) => (
+                <tr>
+                  <td>
+                    {preset.name}
+                    <br />
+                    <span class="field-help">{preset.basis}</span>
+                  </td>
+                  <td class="num">{formatNumber(preset.poundsPerCubicFoot, 0)}</td>
+                  <td class="num">{formatNumber(tonsPerCubicYard(preset.poundsPerCubicFoot), 2)}</td>
+                  <td class="num">{formatNumber(kilogramsPerCubicMeter(preset.poundsPerCubicFoot), 0)}</td>
+                  <td>{preset.publishedRange}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))
+    }
+    <p>
+      Pea gravel, river rock, crusher run, decomposed granite, lava rock, and the mulch weights are
+      planning midpoints of ranges suppliers and reference tables commonly quote. They are labeled
+      that way in the basis column. Crushed stone uses the Engineering Toolbox dry-gravel figure
+      directly. Screened topsoil uses the loam figure. Fill dirt uses loose dry dirt. When a
+      supplier has tested a product, the test often follows a loose bulk-density method such as
+      ASTM C29. This site has not run those tests.
+    </p>
+
+    <h2>Mulch depth</h2>
+    <p>
+      The depth guidance on the mulch calculator follows extension publications, not a density
+      table.
+      <a href="https://extension.psu.edu/mulching-landscape-trees">Penn State Extension</a>
+      recommends 2 to 4 inches of organic mulch, less on poorly drained soil and with fine
+      shredded mulch, kept off the root flare.
+      <a href="https://yardandgarden.extension.iastate.edu/faq/how-deep-should-mulch-layer-be-around-trees-and-shrubs">Iowa State University Extension</a>
+      suggests 3 to 4 inches of wood chips or shredded bark on well-drained sites and 2 to 3 inches
+      on heavy soil, kept at least 6 inches off the trunk.
+      <a href="https://extension.illinois.edu/sites/default/files/proper_mulching_techniques_infosheet.pdf">University of Illinois Extension</a>
+      and
+      <a href="https://hort.extension.wisc.edu/articles/wood-mulch-and-tree-health/">Wisconsin Horticulture</a>
+      give the same 2 to 4 inch band and the same warning against mulch piled on the bark.
+    </p>
+
+    <h2>Sod sizes</h2>
+    <p>
+      A pallet of about 450 square feet, in rolls of about 10 square feet, is a common US sales
+      unit. It is not a standard you can look up the way you can look up the foot. Farms also sell
+      400 and 500 square foot pallets and smaller slabs. Both sizes are fields in the calculator
+      for that reason. The default 5 percent waste allowance is a planning figure for ordinary edge
+      cuts on a rectangle. Curved layouts waste more.
+    </p>
+
+    <h2>Rounding and what the tools will not do</h2>
+    <p>
+      Displayed areas, yards, and short tons are rounded for reading. The bag, pallet, and roll
+      counts use the full value and then round up. Two calculators that you add together by hand
+      should be added from the cubic yards or square feet, not from already-rounded bag counts.
+    </p>
+    <p>
+      These tools estimate material for an order. They do not design a driveway section, a drainage
+      system, a retaining wall, or a soil specification. They do not know how wet tomorrow’s load
+      will be. For a structural base, a drainage trench, or a large grade change, use the
+      contractor’s or engineer’s depth and the supplier’s density, and treat this page as the
+      arithmetic.
+    </p>
+  </article>
+</BaseLayout>

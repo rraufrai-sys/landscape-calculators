@@ -1,0 +1,29 @@
+---
+import { tools } from "../config/tools";
+
+const pathname = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/">
+      <svg class="logo" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#e7c27a"></rect>
+        <rect x="8" y="22" width="16" height="4" rx="2" fill="#8a5a32"></rect>
+        <rect x="14.5" y="12" width="3" height="11" rx="1.5" fill="#1d5c3b"></rect>
+        <circle cx="11.5" cy="14" r="4.2" fill="#1d5c3b"></circle>
+        <circle cx="20.5" cy="11.5" r="3.6" fill="#1d5c3b"></circle>
+      </svg>
+      <span>Yardwork</span>
+    </a>
+    <nav class="nav" aria-label="Calculators">
+      {
+        tools.map((tool) => (
+          <a href={tool.href} aria-current={pathname === tool.href ? "page" : undefined}>
+            {tool.shortName}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>

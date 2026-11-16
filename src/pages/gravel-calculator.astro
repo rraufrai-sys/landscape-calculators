@@ -1,0 +1,191 @@
+---
+import AdSlot from "../components/AdSlot.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import FaqList from "../components/FaqList.astro";
+import RelatedTools from "../components/RelatedTools.astro";
+import VolumeCalculator from "../components/VolumeCalculator.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { gravelExample } from "../config/examples";
+import { gravelBags, gravelPresets, presetById } from "../lib/calc";
+import { cubicYardsForArea, formatNumber, tonsPerCubicYard, unwrap, volumeOrderFromFields } from "../lib/calc";
+import { calculatorJsonLd, type Faq } from "../lib/seo";
+
+const title = "Gravel Calculator — Cubic Yards, Tons, and Bags | Yardwork";
+const description =
+  "Calculate gravel in cubic yards, cubic feet, and short tons. Rectangles, circles, and triangles, with editable pea gravel, crushed stone, and river rock densities.";
+const pathname = "/gravel-calculator/";
+const preset = presetById(gravelPresets, gravelExample.presetId);
+const example = unwrap(
+  volumeOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(gravelExample.primary),
+    secondary: String(gravelExample.secondary),
+    depth: String(gravelExample.depthInches),
+    density: String(preset.poundsPerCubicFoot),
+    densityUnit: "lb-per-cu-ft",
+    allowancePercent: String(gravelExample.allowancePercent),
+    bags: gravelBags,
+    pricePerCubicYard: "",
+    pricePerShortTon: "",
+    pricePerBag: "",
+    priceBagId: "half-cu-ft",
+  }),
+);
+const depthRows = [2, 3, 4, 6].map((depth) => ({
+  depth,
+  yards: cubicYardsForArea(100, depth, 0),
+  withAllowance: cubicYardsForArea(100, depth, 0.1),
+}));
+const faqs: Faq[] = [
+  {
+    question: "How many cubic yards of gravel do I need?",
+    answer:
+      "Multiply the area in square feet by the depth in inches, then divide by 324. A 12 by 10 foot area at 2 inches is 20 cubic feet, or 0.74 cubic yards, before any allowance. The calculator then multiplies by 1 plus your waste and compaction percent.",
+  },
+  {
+    question: "How much does a cubic yard of gravel weigh?",
+    answer:
+      "It depends on the stone and how wet it is. This calculator uses 100 pounds per cubic foot for pea gravel and river rock, which is 1.35 short tons per cubic yard, and 105 pounds per cubic foot for dry crushed stone, about 1.42 short tons. The Engineering Toolbox lists wet gravel at 125 pounds per cubic foot. Replace the density with your supplier’s figure when you have one.",
+  },
+  {
+    question: "Is a ton of gravel the same as a cubic yard?",
+    answer:
+      "No. A short ton is 2,000 pounds, and a cubic yard is 27 cubic feet. Those match only when the material weighs about 74 pounds per cubic foot, which is lighter than ordinary gravel. At the pea-gravel preset, one cubic yard is 1.35 short tons, so one ton is about 0.74 cubic yards.",
+  },
+  {
+    question: "How many 0.5 cubic foot bags are in a cubic yard of gravel?",
+    answer:
+      "Fifty-four. A cubic yard is 27 cubic feet, and 27 divided by 0.5 is 54. The calculator rounds up when the order is not an even number of bags. The sample 12 by 10 foot area with a 10 percent allowance is 22 cubic feet, which is 44 half-cubic-foot bags.",
+  },
+  {
+    question: "How deep should a gravel driveway be?",
+    answer:
+      "Thicker than a decorative bed. A residential gravel driveway is usually a compacted base of crusher run or similar dense-graded stone, often several inches, plus a thinner surface of cleaner stone. Calculate each layer on its own. Two or three inches is a path or a surface layer, not a base that will carry a car.",
+  },
+  {
+    question: "Should I add extra gravel for compaction?",
+    answer:
+      "For a decorative layer, a small allowance covers spillage and thin spots. For base that will be compacted, the finished thickness is less than the loose thickness on the truck, so the allowance has to cover that difference. Ten percent means the order is 1.10 times the measured volume. A contractor who specifies a compacted depth can tell you how much loose stone that depth requires.",
+  },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Gravel calculator", description, pathname, faqs })}>
+  <header class="page-intro">
+    <Breadcrumb current="Gravel calculator" />
+    <h1>Gravel calculator</h1>
+    <p class="lede">
+      Estimate cubic yards, cubic feet, short tons, and bags of gravel for a rectangle, circle, or
+      triangle. Depth is in inches. The density starts from a preset and stays editable.
+    </p>
+  </header>
+
+  <div class="calculator-wrap">
+    <VolumeCalculator
+      presets={gravelPresets}
+      defaultPresetId={gravelExample.presetId}
+      primary={gravelExample.primary}
+      secondary={gravelExample.secondary}
+      depthInches={gravelExample.depthInches}
+      allowancePercent={gravelExample.allowancePercent}
+      bags={gravelBags}
+      depthHelp="Decorative cover is often 2 to 3 inches. A driveway base is thicker. The depth guide below separates those cases."
+      allowanceHelp="Extra material for waste and, on base rock, compaction. Ten percent orders 1.10 times the measured volume."
+      bagNote="Volume bags are counted from cubic feet. Weight bags are counted from the order weight, so they change when you edit the density. Counts round up to a whole bag."
+    />
+  </div>
+
+  <AdSlot slotId="gravel-rectangle" />
+
+  <article class="prose">
+    <h2>How to measure the area</h2>
+    <p>
+      Use the outside edges of the area that will actually receive stone. Edging and fabric do not
+      change the volume, but they do change where you stop measuring.
+    </p>
+    <ul>
+      <li>Rectangle: measure the two sides. For an L-shaped drive or bed, split it into two rectangles and add the cubic yards. Volume adds.</li>
+      <li>Circle: measure the diameter, the widest distance across, not the radius. The area is π times the radius squared.</li>
+      <li>Triangle: measure one side as the base, then the height square to that side. The height is not the length of a slanted edge. The area is half of base times height.</li>
+      <li>Oval: a circle that uses the average of the long and short diameters is closer than a rectangle of the full length and width, which counts corners the oval does not have.</li>
+      <li>Slope: if the stone blankets a bank, measure along the slope. A horizontal tape on a steep bank is shorter than the surface you will cover.</li>
+    </ul>
+
+    <h2>How deep to order gravel</h2>
+    <p>
+      Enter the loose thickness you want delivered. Walking, raking, and compacting make the
+      finished layer thinner than that number. The allowance is where you account for the difference.
+    </p>
+    <ul>
+      <li>Decorative cover over soil or fabric: 2 inches is about the thinnest layer that hides the ground. Pea gravel looks more even at 3 inches because the stones move.</li>
+      <li>Walkways: 2 to 3 inches of surface stone. A path that sits in mud season wants that surface on a compacted base, which is a second run of the calculator.</li>
+      <li>Driveways: plan on a compacted base of crusher run or another dense-graded stone, commonly several inches, plus a thinner layer of clean stone on top. Two inches of pea gravel will not carry a car.</li>
+      <li>Drainage stone around a pipe follows the pipe or system detail. You can still measure the trench as a rectangle.</li>
+    </ul>
+    <p>
+      One cubic yard spread 1 inch deep covers 324 square feet. Divide 324 by the depth in inches
+      to get the coverage of one yard. At 3 inches, one yard covers 108 square feet.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <caption>Gravel for 100 square feet, before and after a 10 percent allowance</caption>
+        <thead>
+          <tr>
+            <th>Loose depth</th>
+            <th class="num">Cubic yards</th>
+            <th class="num">With 10%</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            depthRows.map((row) => (
+              <tr>
+                <td>{row.depth} inches</td>
+                <td class="num">{formatNumber(row.yards, 2)}</td>
+                <td class="num">{formatNumber(row.withAllowance, 2)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Weight, bags, and what a ton means</h2>
+    <p>
+      Pea gravel and river rock start at 100 pounds per cubic foot, which is
+      {formatNumber(tonsPerCubicYard(100), 2)} short tons per cubic yard. Crushed stone starts at
+      the dry-gravel figure of 105 pounds per cubic foot, about
+      {formatNumber(tonsPerCubicYard(105), 2)} short tons per yard. Wet gravel is heavier. The
+      <a href="/methodology/">methodology page</a> lists the source for each preset. If the
+      supplier printed a pounds-per-cubic-foot or tons-per-yard number, type that in. Choosing a
+      material again replaces an edited density.
+    </p>
+    <p>
+      A half cubic foot bag is the common small bag of pea gravel and river rock. There are 54 of
+      them in a cubic yard. Some stone is sold in 50 pound bags. That count uses the density in
+      the form, so editing the density changes the 50 pound count and leaves the half-cubic-foot
+      count alone.
+    </p>
+    <p>
+      The price boxes are separate ways to buy the same order: by the cubic yard, by the short
+      ton, or by the bag. A quarry ticket and a garden-center bag are different purchases.
+    </p>
+
+    <h2>The example loaded in the form</h2>
+    <p>
+      A {gravelExample.primary} by {gravelExample.secondary} foot area at {gravelExample.depthInches} inches
+      is {formatNumber(example.areaSqFt, 0)} square feet. Two inches is 2 ÷ 12 feet, so the net
+      volume is {formatNumber(example.netCubicFeet, 0)} cubic feet, or
+      {formatNumber(example.netCubicYards, 2)} cubic yards. A {gravelExample.allowancePercent} percent
+      allowance brings the order to {formatNumber(example.orderedCubicFeet, 0)} cubic feet
+      ({formatNumber(example.orderedCubicYards, 2)} cubic yards). At 100 pounds per cubic foot that
+      is {formatNumber(example.orderedShortTons, 2)} short tons, 44 bags of 0.5 cubic feet, and 44
+      bags of 50 pounds. It is a reasonable surface for a small landing, not a driveway section.
+    </p>
+
+    <AdSlot slotId="gravel-banner" size="banner" />
+    <FaqList faqs={faqs} />
+    <RelatedTools current={pathname} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { tools } from "../config/tools";
+
+const title = "Page not found | Yardwork";
+const description = "That page is not on Yardwork Calculators. The gravel, mulch, topsoil, and sod calculators are linked from here.";
+---
+
+<BaseLayout title={title} description={description} noindex={true}>
+  <header class="page-intro">
+    <h1>That page is not here</h1>
+    <p class="lede">
+      The address may be mistyped. The calculators are below, and the
+      <a href="/">home page</a> lists them with a short description of each.
+    </p>
+  </header>
+  <section class="prose">
+    <ul>
+      {tools.map((tool) => <li><a href={tool.href}>{tool.name}</a>: {tool.summary}</li>)}
+    </ul>
+    <p>
+      Formulas and densities are on the <a href="/methodology/">methodology page</a>.
+    </p>
+  </section>
+</BaseLayout>

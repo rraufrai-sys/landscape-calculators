@@ -1,0 +1,63 @@
+---
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site";
+import { webPageJsonLd } from "../lib/seo";
+
+const title = "About Yardwork Calculators";
+const description =
+  "Yardwork Calculators estimates gravel, mulch, topsoil, and sod for US yards. Formulas and densities are published, and every density can be edited.";
+const pathname = "/about/";
+---
+
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+  <header class="page-intro">
+    <Breadcrumb current="About" />
+    <h1>About</h1>
+    <p class="lede">{site.tagline}</p>
+  </header>
+  <article class="prose">
+    <p>
+      Yardwork is a set of calculators for people ordering landscape material in the United States:
+      homeowners measuring a bed, and anyone else who has a length, a width, and a depth and needs
+      cubic yards before calling a supplier. The first version covers gravel, mulch, topsoil, and
+      sod.
+    </p>
+    <p>
+      US customary units are the default because that is how the material is sold: cubic yards,
+      short tons of 2,000 pounds, half-cubic-foot bags of stone, 2 and 3 cubic foot bags of mulch,
+      and sod by the square foot and the pallet. A metric switch converts the measurements you
+      type. The order units stay in the result.
+    </p>
+    <h2>What you can check</h2>
+    <p>
+      Each result includes the working, in the same order as the arithmetic: area, depth, net
+      volume, allowance, density, weight, then bags or rolls. The
+      <a href="/methodology/">methodology</a> lists the formulas and the density behind every
+      preset, with the reference it came from. Where a number is a midpoint of a published range
+      rather than a single table value, the page says so.
+    </p>
+    <p>
+      Densities are editable because moisture and the quarry move the weight. A preset gets the
+      estimate started. The figure on a supplier’s ticket replaces it. Changing the material menu
+      fills the preset back in, which the form tells you before you do it.
+    </p>
+    <h2>What this site does not do</h2>
+    <p>
+      It does not specify a driveway section, a wall, a drainage system, or a planting plan. Depth
+      notes on the calculator pages are ordering guidance, and the driveway note is there to stop
+      a 2 inch decorative calculation from being used as a base. It does not account for delivery
+      minimums, tax, or the payload of a particular truck beyond showing the weight and telling you
+      to read the sticker on the door.
+    </p>
+    <p>
+      The calculators run in the browser on a static page. The measurements are not uploaded.
+      There is no account. Contact details are on the <a href="/contact/">contact page</a>, and
+      they are still placeholders until this site is published under its own name and address.
+    </p>
+    <p>
+      Material presets are reference figures, not paid placements. No supplier is featured, and
+      the calculators do not send you to a store.
+    </p>
+  </article>
+</BaseLayout>

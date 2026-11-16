@@ -1,0 +1,24 @@
+---
+import type { Faq } from "../lib/seo";
+
+interface Props {
+  faqs: readonly Faq[];
+  heading?: string;
+}
+
+const { faqs, heading = "Common questions" } = Astro.props;
+---
+
+<section class="faq" aria-labelledby="faq-heading">
+  <h2 id="faq-heading">{heading}</h2>
+  {
+    faqs.map((faq) => (
+      <article>
+        <h3>{faq.question}</h3>
+        {faq.answer.split(/\n\n/).map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </article>
+    ))
+  }
+</section>
