@@ -1,0 +1,265 @@
+---
+import {
+  allowanceNote,
+  formatNumber,
+  presetById,
+  summarizeVolume,
+  unwrap,
+  volumeOrderFromFields,
+  type BagSpec,
+  type DensityPreset,
+} from "../lib/calc";
+
+interface Props {
+  presets: readonly DensityPreset[];
+  defaultPresetId: string;
+  primary: number;
+  secondary: number;
+  depthInches: number;
+  allowancePercent: number;
+  bags: readonly BagSpec[];
+  depthHelp: string;
+  allowanceHelp: string;
+  bagNote: string;
+}
+
+const {
+  presets,
+  defaultPresetId,
+  primary,
+  secondary,
+  depthInches,
+  allowancePercent,
+  bags,
+  depthHelp,
+  allowanceHelp,
+  bagNote,
+} = Astro.props;
+
+const preset = presetById(presets, defaultPresetId);
+const order = unwrap(
+  volumeOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(primary),
+    secondary: String(secondary),
+    depth: String(depthInches),
+    density: String(preset.poundsPerCubicFoot),
+    densityUnit: "lb-per-cu-ft",
+    allowancePercent: String(allowancePercent),
+    pricePerCubicYard: "",
+    pricePerShortTon: "",
+    pricePerBag: "",
+    priceBagId: bags[0]?.id ?? "",
+    bags,
+  }),
+);
+const summary = summarizeVolume(order, preset.name);
+const config = JSON.stringify({
+  presets: presets.map((item) => ({
+    id: item.id,
+    name: item.name,
+    poundsPerCubicFoot: item.poundsPerCubicFoot,
+    guidance: item.guidance,
+  })),
+  bags,
+});
+---
+
+<form class="calculator" data-calculator="volume" data-config={config} novalidate autocomplete="off">
+  <div class="calculator__inputs">
+    <fieldset class="segmented">
+      <legend class="visually-hidden">Units</legend>
+      <label class="segment">
+        <input type="radio" name="unit" value="us" checked />
+        <span>US customary</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="unit" value="metric" />
+        <span>Metric</span>
+      </label>
+    </fieldset>
+
+    <fieldset class="segmented">
+      <legend class="visually-hidden">Area shape</legend>
+      <label class="segment">
+        <input type="radio" name="shape" value="rectangle" checked />
+        <span>Rectangle</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="shape" value="circle" />
+        <span>Circle</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="shape" value="triangle" />
+        <span>Triangle</span>
+      </label>
+    </fieldset>
+    <p class="field-help" id="shape-help" data-shape-help>
+      Length and width are the two sides of the area you will cover.
+    </p>
+
+    <div class="fields fields--split">
+      <div class="field">
+        <label for="primary"><span data-label="primary">Length (feet)</span></label>
+        <input id="primary" name="primary" type="text" inputmode="decimal" value={primary} />
+      </div>
+      <div class="field" data-dimension="secondary">
+        <label for="secondary"><span data-label="secondary">Width (feet)</span></label>
+        <input id="secondary" name="secondary" type="text" inputmode="decimal" value={secondary} />
+      </div>
+      <div class="field">
+        <label for="depth"><span data-label="depth">Depth (inches)</span></label>
+        <input
+          id="depth"
+          name="depth"
+          type="text"
+          inputmode="decimal"
+          value={depthInches}
+          aria-describedby="depth-help"
+        />
+        <p class="field-help" id="depth-help">{depthHelp}</p>
+      </div>
+      <div class="field">
+        <label for="allowance">Allowance (%)</label>
+        <input
+          id="allowance"
+          name="allowance"
+          type="text"
+          inputmode="decimal"
+          value={allowancePercent}
+          aria-describedby="allowance-help"
+        />
+        <p class="field-help" id="allowance-help">{allowanceHelp}</p>
+      </div>
+    </div>
+
+    <div class="fields fields--split">
+      <div class="field">
+        <label for="preset">Material</label>
+        <select id="preset" name="preset">
+          {
+            presets.map((item) => (
+              <option value={item.id} selected={item.id === preset.id}>
+                {item.name}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="density"><span data-label="density">Density (lb/cu ft)</span></label>
+        <input
+          id="density"
+          name="density"
+          type="text"
+          inputmode="decimal"
+          value={preset.poundsPerCubicFoot}
+          aria-describedby="density-help"
+        />
+      </div>
+    </div>
+    <p class="field-help" id="density-help" data-preset-guidance>{preset.guidance}</p>
+    <p class="field-help" data-density-custom hidden>
+      This density was edited and no longer matches the preset.
+    </p>
+  </div>
+
+  <div class="calculator__extras">
+    <fieldset class="price-fields">
+      <legend>Price, optional</legend>
+      <div class="fields fields--split">
+        <div class="field">
+          <label for="price-yard">Per cubic yard (USD)</label>
+          <input id="price-yard" name="pricePerCubicYard" type="text" inputmode="decimal" placeholder="e.g. 55" />
+        </div>
+        <div class="field">
+          <label for="price-ton">Per short ton (USD)</label>
+          <input id="price-ton" name="pricePerShortTon" type="text" inputmode="decimal" placeholder="e.g. 40" />
+        </div>
+        <div class="field">
+          <label for="price-bag">Per bag (USD)</label>
+          <input id="price-bag" name="pricePerBag" type="text" inputmode="decimal" placeholder="e.g. 5" />
+        </div>
+        <div class="field">
+          <label for="price-bag-size">Bag this price applies to</label>
+          <select id="price-bag-size" name="priceBagId">
+            {bags.map((bag) => <option value={bag.id}>{bag.label}</option>)}
+          </select>
+        </div>
+      </div>
+      <p class="field-help" id="price-help">
+        Each price is its own estimate for this order. Delivery and tax are separate. Prices stay in US
+        selling units: cubic yards, short tons, and bags.
+      </p>
+    </fieldset>
+
+    <button class="button" type="submit">Update results</button>
+    <p class="field-help">Results update as you type. The measurements start as a worked example.</p>
+    <noscript>
+      <p class="field-help">
+        JavaScript is off, so the result stays on the example already filled in. The working under the
+        numbers is that example. The formulas are also on the
+        <a href="/methodology/">methodology page</a>.
+      </p>
+    </noscript>
+  </div>
+
+  <div class="results">
+    <h2>Results</h2>
+    <p class="results__lead" id="calc-error" data-out="summary" aria-live="polite" aria-atomic="true">
+      {summary}
+    </p>
+    <dl class="stat-grid">
+      <div>
+        <dt>Cubic yards</dt>
+        <dd data-out="yards">{formatNumber(order.orderedCubicYards, 2)}</dd>
+      </div>
+      <div>
+        <dt>Cubic feet</dt>
+        <dd data-out="feet">{formatNumber(order.orderedCubicFeet, 2)}</dd>
+      </div>
+      <div>
+        <dt>Short tons</dt>
+        <dd data-out="tons">{formatNumber(order.orderedShortTons, 2)}</dd>
+      </div>
+      <div>
+        <dt>Square feet</dt>
+        <dd data-out="area">{formatNumber(order.areaSqFt, 1)}</dd>
+      </div>
+      <div>
+        <dt>Cubic meters</dt>
+        <dd data-out="meters">{formatNumber(order.orderedCubicMeters, 3)}</dd>
+      </div>
+      <div>
+        <dt>Metric tonnes</dt>
+        <dd data-out="tonnes">{formatNumber(order.orderedMetricTonnes, 3)}</dd>
+      </div>
+      {
+        order.bags.map((bag) => (
+          <div>
+            <dt>{bag.label}</dt>
+            <dd data-bag-id={bag.id}>{formatNumber(bag.count, 0)}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="field-help" data-out="allowance">{allowanceNote(order)}</p>
+    <p class="field-help">{bagNote}</p>
+    <h3>Material cost</h3>
+    <p data-out="cost-hint">Add a price per cubic yard, short ton, or bag to estimate material cost.</p>
+    <ul data-out="costs" hidden></ul>
+    <h3>Working</h3>
+    <ol data-out="steps">
+      {order.steps.map((step) => <li>{step}</li>)}
+    </ol>
+    <p class="results__source">
+      <a href="/methodology/">Formulas, densities, and sources</a>
+    </p>
+  </div>
+</form>
+
+<script>
+  import { bindVolumeCalculators } from "../scripts/volume-calculator";
+  bindVolumeCalculators();
+</script>

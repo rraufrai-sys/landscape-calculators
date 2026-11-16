@@ -1,0 +1,189 @@
+---
+import {
+  formatNumber,
+  sodMeasureNote,
+  summarizeSod,
+  unwrap,
+  sodOrderFromFields,
+} from "../lib/calc";
+
+interface Props {
+  primary: number;
+  secondary: number;
+  allowancePercent: number;
+  sqFtPerPallet: number;
+  sqFtPerPiece: number;
+  allowanceHelp: string;
+}
+
+const { primary, secondary, allowancePercent, sqFtPerPallet, sqFtPerPiece, allowanceHelp } =
+  Astro.props;
+
+const order = unwrap(
+  sodOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(primary),
+    secondary: String(secondary),
+    allowancePercent: String(allowancePercent),
+    sqFtPerPallet: String(sqFtPerPallet),
+    sqFtPerPiece: String(sqFtPerPiece),
+    pieceName: "rolls",
+    pricePerSqFt: "",
+    pricePerPallet: "",
+  }),
+);
+---
+
+<form class="calculator" data-calculator="sod" data-piece-name="rolls" novalidate autocomplete="off">
+  <div class="calculator__inputs">
+    <fieldset class="segmented">
+      <legend class="visually-hidden">Units</legend>
+      <label class="segment">
+        <input type="radio" name="unit" value="us" checked />
+        <span>US customary</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="unit" value="metric" />
+        <span>Metric</span>
+      </label>
+    </fieldset>
+
+    <fieldset class="segmented">
+      <legend class="visually-hidden">Area shape</legend>
+      <label class="segment">
+        <input type="radio" name="shape" value="rectangle" checked />
+        <span>Rectangle</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="shape" value="circle" />
+        <span>Circle</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="shape" value="triangle" />
+        <span>Triangle</span>
+      </label>
+    </fieldset>
+    <p class="field-help" data-shape-help>
+      Length and width are the two sides of the lawn you will cover.
+    </p>
+    <p class="field-help">
+      Pallet and roll sizes stay in square feet, because that is how US farms sell sod.
+    </p>
+
+    <div class="fields fields--split">
+      <div class="field">
+        <label for="primary"><span data-label="primary">Length (feet)</span></label>
+        <input id="primary" name="primary" type="text" inputmode="decimal" value={primary} />
+      </div>
+      <div class="field" data-dimension="secondary">
+        <label for="secondary"><span data-label="secondary">Width (feet)</span></label>
+        <input id="secondary" name="secondary" type="text" inputmode="decimal" value={secondary} />
+      </div>
+      <div class="field">
+        <label for="allowance">Waste allowance (%)</label>
+        <input
+          id="allowance"
+          name="allowance"
+          type="text"
+          inputmode="decimal"
+          value={allowancePercent}
+          aria-describedby="allowance-help"
+        />
+        <p class="field-help" id="allowance-help">{allowanceHelp}</p>
+      </div>
+    </div>
+
+    <div class="fields fields--split">
+      <div class="field">
+        <label for="pallet">Pallet size (sq ft)</label>
+        <input id="pallet" name="pallet" type="text" inputmode="decimal" value={sqFtPerPallet} aria-describedby="pallet-help" />
+        <p class="field-help" id="pallet-help">
+          Many US farms sell about 450 square feet per pallet. Some sell 400 or 500. Use the number
+          on the farm’s ticket.
+        </p>
+      </div>
+      <div class="field">
+        <label for="piece">Roll size (sq ft)</label>
+        <input id="piece" name="piece" type="text" inputmode="decimal" value={sqFtPerPiece} aria-describedby="piece-help" />
+        <p class="field-help" id="piece-help">
+          A common roll is 10 square feet, often 2 feet by 5 feet. Big-roll sod, installed by
+          machine, is a different product.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="calculator__extras">
+    <fieldset class="price-fields">
+      <legend>Price, optional</legend>
+      <div class="fields fields--split">
+        <div class="field">
+          <label for="price-area">Per square foot (USD)</label>
+          <input id="price-area" name="pricePerSqFt" type="text" inputmode="decimal" placeholder="e.g. 0.50" />
+        </div>
+        <div class="field">
+          <label for="price-pallet">Per pallet (USD)</label>
+          <input id="price-pallet" name="pricePerPallet" type="text" inputmode="decimal" placeholder="e.g. 280" />
+        </div>
+      </div>
+      <p class="field-help">
+        The square-foot price uses the order area, including the allowance. The pallet price uses
+        whole pallets. Delivery and installation are separate.
+      </p>
+    </fieldset>
+
+    <button class="button" type="submit">Update results</button>
+    <p class="field-help">Results update as you type. The measurements start as a worked example.</p>
+    <noscript>
+      <p class="field-help">
+        JavaScript is off, so the result stays on the example already filled in. The working under the
+        numbers is that example.
+      </p>
+    </noscript>
+  </div>
+
+  <div class="results">
+    <h2>Results</h2>
+    <p class="results__lead" id="calc-error" data-out="summary" aria-live="polite" aria-atomic="true">
+      {summarizeSod(order)}
+    </p>
+    <dl class="stat-grid">
+      <div>
+        <dt>Square feet to order</dt>
+        <dd data-out="order-area">{formatNumber(order.orderedSqFt, 1)}</dd>
+      </div>
+      <div>
+        <dt>Pallets to order</dt>
+        <dd data-out="pallets">{formatNumber(order.palletsToOrder, 0)}</dd>
+      </div>
+      <div>
+        <dt>Exact pallets</dt>
+        <dd data-out="exact-pallets">{formatNumber(order.exactPallets, 2)}</dd>
+      </div>
+      <div>
+        <dt>Rolls to order</dt>
+        <dd data-out="pieces">{formatNumber(order.piecesToOrder, 0)}</dd>
+      </div>
+    </dl>
+    <p class="field-help" data-out="measure">{sodMeasureNote(order)}</p>
+    <p class="note" data-out="pallet-note" hidden={order.partialPalletNote === null}>
+      {order.partialPalletNote}
+    </p>
+    <h3>Material cost</h3>
+    <p data-out="cost-hint">Add a price per square foot or per pallet to estimate material cost.</p>
+    <ul data-out="costs" hidden></ul>
+    <h3>Working</h3>
+    <ol data-out="steps">
+      {order.steps.map((step) => <li>{step}</li>)}
+    </ol>
+    <p class="results__source">
+      <a href="/methodology/">Formulas and assumptions</a>
+    </p>
+  </div>
+</form>
+
+<script>
+  import { bindSodCalculators } from "../scripts/sod-calculator";
+  bindSodCalculators();
+</script>

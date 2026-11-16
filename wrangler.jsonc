@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "landscape-calculators",
+  // Static Astro site. There is no Worker script because every page is pre-rendered.
+  // https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/
+  "compatibility_date": "2026-11-16",
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

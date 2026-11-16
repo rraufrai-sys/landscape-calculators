@@ -1,0 +1,80 @@
+---
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site";
+import { webPageJsonLd } from "../lib/seo";
+
+const title = "Terms of Use | Yardwork";
+const description =
+  "Terms for the Yardwork landscaping calculators. Results are ordering estimates, not a construction specification, and densities vary by load.";
+const pathname = "/terms/";
+---
+
+<BaseLayout title={title} description={description} jsonLd={webPageJsonLd(title, description, pathname)}>
+  <header class="page-intro">
+    <Breadcrumb current="Terms of use" />
+    <h1>Terms of use</h1>
+    <p class="lede">The terms for using {site.legalName}. Last updated {site.updatedLabel}.</p>
+  </header>
+  <article class="prose">
+    <h2>Estimates, not a specification</h2>
+    <p>
+      The calculators estimate how much gravel, mulch, topsoil, or sod to order from measurements
+      you supply. They are an arithmetic aid. They are not an engineering design, a drainage plan,
+      a soils report, or a substitute for the supplier’s scale ticket.
+    </p>
+    <p>
+      Bulk density changes with moisture, gradation, and compaction. The presets are published on
+      the <a href="/methodology/">methodology page</a> with their sources and their limits. A load
+      can weigh more or less than the preset. Bag and pallet sizes vary by brand and farm. You are
+      responsible for the measurements you enter and for confirming the order with the seller.
+    </p>
+    <p>
+      Depth comments on the calculator pages are general US practice for ordering. A driveway, a
+      retaining base, a trench, or a lawn renovation can require a different section than the
+      example loaded in the form. Where the page says to calculate layers separately or to ask the
+      farm about a partial pallet, that instruction is part of using the result.
+    </p>
+
+    <h2>No warranty</h2>
+    <p>
+      The site is provided as is. There is no warranty of accuracy, fitness for a particular
+      project, or uninterrupted availability. To the extent the law allows, the publisher is not
+      liable for a short load, a heavy load, a wrong measurement, or a cost estimate that left out
+      delivery and tax. The price fields are material-only arithmetic on the quantity shown.
+    </p>
+
+    <h2>Units</h2>
+    <p>
+      Unless a label says otherwise, tons are US short tons of 2,000 pounds, yards are cubic yards
+      of 27 cubic feet, and currency amounts are US dollars. Metric results are conversions of
+      those quantities. The international foot used in the conversion is 0.3048 meters.
+    </p>
+
+    <h2>Use of the site</h2>
+    <p>
+      You may link to the calculators. You may not present the pages as a product of someone else,
+      and you may not copy them into another site in a way that implies a partnership that does
+      not exist. The material presets are not endorsements.
+    </p>
+    <p>
+      Do not misuse the site, attempt to break the hosting, or send automated traffic that
+      interferes with other readers. The pages are static. There is nothing to log into.
+    </p>
+
+    <h2>Advertising</h2>
+    <p>
+      This version shows labeled empty boxes where an ad could go later. Those boxes are not
+      advertisements and do not load a third-party script. If ads are added, the
+      <a href="/privacy/">privacy policy</a> will say so before the scripts are turned on.
+    </p>
+
+    <h2>Law and contact</h2>
+    <p>
+      These terms are governed by the laws of the United States. A state venue is not named here
+      because the publisher’s mailing address is still a placeholder, which the
+      <a href="/contact/">contact page</a> marks clearly. Questions about the terms can be sent to
+      the contact address once that placeholder has been replaced with a mailbox that is read.
+    </p>
+  </article>
+</BaseLayout>

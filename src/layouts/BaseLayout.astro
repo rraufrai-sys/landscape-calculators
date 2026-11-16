@@ -1,0 +1,29 @@
+---
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Seo from "../components/Seo.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  jsonLd?: unknown;
+}
+
+const { title, description, noindex = false, jsonLd } = Astro.props;
+---
+
+<html lang="en-US">
+  <head>
+    <Seo title={title} description={description} noindex={noindex} jsonLd={jsonLd} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

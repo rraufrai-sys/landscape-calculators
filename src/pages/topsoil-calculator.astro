@@ -1,0 +1,193 @@
+---
+import AdSlot from "../components/AdSlot.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import FaqList from "../components/FaqList.astro";
+import RelatedTools from "../components/RelatedTools.astro";
+import VolumeCalculator from "../components/VolumeCalculator.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { soilExample } from "../config/examples";
+import { soilBags, soilPresets, presetById } from "../lib/calc";
+import { cubicYardsForArea, formatNumber, unwrap, volumeOrderFromFields } from "../lib/calc";
+import { calculatorJsonLd, type Faq } from "../lib/seo";
+
+const title = "Topsoil Calculator — Soil Yards, Tons, and Bags | Yardwork";
+const description =
+  "Calculate topsoil and garden soil in cubic yards, short tons, and bags. For raised beds, new beds, and thin lawn topdressing.";
+const pathname = "/topsoil-calculator/";
+const preset = presetById(soilPresets, soilExample.presetId);
+const example = unwrap(
+  volumeOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(soilExample.primary),
+    secondary: String(soilExample.secondary),
+    depth: String(soilExample.depthInches),
+    density: String(preset.poundsPerCubicFoot),
+    densityUnit: "lb-per-cu-ft",
+    allowancePercent: String(soilExample.allowancePercent),
+    bags: soilBags,
+    pricePerCubicYard: "",
+    pricePerShortTon: "",
+    pricePerBag: "",
+    priceBagId: "one-cu-ft",
+  }),
+);
+const depthRows = [
+  { label: "Lawn topdressing, 1/4 inch", depth: 0.25 },
+  { label: "Lawn topdressing, 1/2 inch", depth: 0.5 },
+  { label: "New bed, 6 inches", depth: 6 },
+  { label: "Raised bed, 12 inches", depth: 12 },
+].map((row) => ({
+  ...row,
+  yardsPerHundred: cubicYardsForArea(100, row.depth, 0),
+}));
+const faqs: Faq[] = [
+  {
+    question: "How much topsoil do I need?",
+    answer:
+      "Multiply the area in square feet by the depth in inches and divide by 324 to get cubic yards. An 8 by 4 foot raised bed filled 12 inches deep is 32 cubic feet, about 1.19 cubic yards, before a settling allowance.",
+  },
+  {
+    question: "How many yards of topsoil does a lawn need?",
+    answer:
+      "Topdressing a live lawn is a thin layer, about 1/4 to 1/2 inch, so you do not bury the grass crowns. A new planting area is several inches deep. Enter the depth you will actually place. A garden-bed depth on an existing lawn will smother it.",
+  },
+  {
+    question: "How much does a cubic yard of topsoil weigh?",
+    answer:
+      "At the screened-topsoil preset of 80 pounds per cubic foot, a cubic yard weighs 1.08 short tons, or 2,160 pounds. The Engineering Toolbox lists loam at 80 pounds per cubic foot and loose dry dirt at 76. Wet loads and clay weigh more. Check the payload sticker on the truck before you fill the bed.",
+  },
+  {
+    question: "How many bags of soil are in a cubic yard?",
+    answer:
+      "Twenty-seven bags of 1 cubic foot, or 36 bags of 0.75 cubic foot. A 40 pound bag count depends on density. At 80 pounds per cubic foot, a 40 pound bag is half a cubic foot, so a cubic yard is 54 of those bags. If the bag prints a volume, use the volume count.",
+  },
+  {
+    question: "Should I order extra soil for settling?",
+    answer:
+      "Soil settles after it is watered, and the bottom of a bed is rarely flat. Ten percent is a modest allowance for that. It is included in the raised-bed example. It does not replace measuring the inside length, width, and the height you will actually fill.",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={calculatorJsonLd({ name: "Topsoil calculator", description, pathname, faqs })}
+>
+  <header class="page-intro">
+    <Breadcrumb current="Topsoil calculator" />
+    <h1>Topsoil calculator</h1>
+    <p class="lede">
+      A soil calculator for cubic yards, short tons, and bags. Use it for screened topsoil, a
+      garden blend, or fill dirt. The right depth depends on whether you are topdressing a lawn,
+      filling a bed, or raising a grade.
+    </p>
+  </header>
+
+  <div class="calculator-wrap">
+    <VolumeCalculator
+      presets={soilPresets}
+      defaultPresetId={soilExample.presetId}
+      primary={soilExample.primary}
+      secondary={soilExample.secondary}
+      depthInches={soilExample.depthInches}
+      allowancePercent={soilExample.allowancePercent}
+      bags={soilBags}
+      depthHelp="Measure the depth you will place. A live lawn wants a fraction of an inch. A raised bed wants the inside height you will fill."
+      allowanceHelp="Allowance for settling and an uneven bottom. Ten percent orders 1.10 times the measured volume."
+      bagNote="Cubic-foot bags are counted from the volume. A 40 pound bag count divides the order weight by 40, so it changes if you edit the density. If a bag prints a volume, prefer that count."
+    />
+  </div>
+
+  <AdSlot slotId="soil-rectangle" />
+
+  <article class="prose">
+    <h2>Choose the depth for the job</h2>
+    <ul>
+      <li>
+        <strong>Topdressing a lawn.</strong> About 1/4 to 1/2 inch. Deeper than that buries the
+        crowns and the grass thins out. For 1/4 inch, type 0.25 in the depth field.
+      </li>
+      <li>
+        <strong>A new bed or a tired border.</strong> Six to eight inches of workable soil is a
+        common planting depth. If you are improving soil that is already there, enter only the
+        depth of new material, not the depth of the whole root zone.
+      </li>
+      <li>
+        <strong>A raised bed.</strong> Measure the inside length and width, then the height you
+        will fill. Boards that stick up above the soil do not count. The example is a 4 by 8 foot
+        bed filled 12 inches.
+      </li>
+      <li>
+        <strong>Fill dirt.</strong> Use it to raise a grade, then cap it with better soil if
+        anything will grow there. The fill preset is the loose-dry figure and will be light
+        compared with a wet clay load.
+      </li>
+    </ul>
+    <div class="table-wrap">
+      <table>
+        <caption>Soil for 100 square feet at common depths, before settling</caption>
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th class="num">Cubic yards</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            depthRows.map((row) => (
+              <tr>
+                <td>{row.label}</td>
+                <td class="num">{formatNumber(row.yardsPerHundred, 2)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Tons and bags</h2>
+    <p>
+      Screened topsoil starts at 80 pounds per cubic foot, in line with the Engineering Toolbox
+      figures for loam (80) and loose moist dirt (78). A cubic yard at that density weighs
+      {formatNumber((80 * 27) / 2000, 2)} short tons. Garden mixes with compost are lighter. Wet
+      yard loads run heavier, sometimes toward 100 pounds per cubic foot. Edit the density when
+      the supplier has a number, especially if you are checking a truck’s payload.
+    </p>
+    <p>
+      A full-size pickup often has room for the volume of a yard or two and not for the weight.
+      Two cubic yards of this topsoil is a bit over two short tons, before the people and the fuel
+      in the truck. Read the payload sticker on the driver’s door and leave a margin.
+    </p>
+    <p>
+      Bag math splits in two. A 1 cubic foot bag count is the cubic feet of the order. A 0.75
+      cubic foot bag is the same volume divided by 0.75. A 40 pound bag is the order weight
+      divided by 40, which is only as good as the density. Many bags print both a weight and a
+      volume. Use the printed volume when it is there.
+    </p>
+
+    <h2>The example loaded in the form</h2>
+    <p>
+      A {soilExample.secondary} by {soilExample.primary} foot bed filled
+      {soilExample.depthInches} inches is {formatNumber(example.areaSqFt, 0)} square feet times 1
+      foot, or {formatNumber(example.netCubicFeet, 0)} cubic feet. That is
+      {formatNumber(example.netCubicYards, 2)} cubic yards before settling. The
+      {soilExample.allowancePercent} percent allowance makes the order
+      {formatNumber(example.orderedCubicFeet, 1)} cubic feet, or
+      {formatNumber(example.orderedCubicYards, 2)} cubic yards, and
+      {formatNumber(example.orderedShortTons, 2)} short tons at 80 pounds per cubic foot.
+    </p>
+    <p>
+      Soil delivered in a truck is loose. After you water it, the surface drops. The allowance is
+      that drop plus a bit for a bed bottom that is not perfectly flat. If you are filling to the
+      top of the boards and want it to stay there, the allowance belongs in the order. If you
+      measured a hole that is already the finished depth you want, you still want a little extra,
+      because the soil you put back is fluffier than the soil you dug out.
+    </p>
+
+    <AdSlot slotId="soil-banner" size="banner" />
+    <FaqList faqs={faqs} />
+    <RelatedTools current={pathname} />
+  </article>
+</BaseLayout>

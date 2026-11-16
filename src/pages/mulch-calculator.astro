@@ -1,0 +1,183 @@
+---
+import AdSlot from "../components/AdSlot.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import FaqList from "../components/FaqList.astro";
+import RelatedTools from "../components/RelatedTools.astro";
+import VolumeCalculator from "../components/VolumeCalculator.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { mulchExample } from "../config/examples";
+import { mulchBags, mulchPresets, presetById } from "../lib/calc";
+import { formatNumber, sqFtPerCubicYard, unwrap, volumeOrderFromFields } from "../lib/calc";
+import { calculatorJsonLd, type Faq } from "../lib/seo";
+
+const title = "Mulch Calculator — Cubic Yards and Bags | Yardwork";
+const description =
+  "Calculate mulch in cubic yards and in bags of 2 and 3 cubic feet. Includes a depth guide for beds and trees and an optional material cost.";
+const pathname = "/mulch-calculator/";
+const preset = presetById(mulchPresets, mulchExample.presetId);
+const example = unwrap(
+  volumeOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(mulchExample.primary),
+    secondary: String(mulchExample.secondary),
+    depth: String(mulchExample.depthInches),
+    density: String(preset.poundsPerCubicFoot),
+    densityUnit: "lb-per-cu-ft",
+    allowancePercent: String(mulchExample.allowancePercent),
+    bags: mulchBags,
+    pricePerCubicYard: "",
+    pricePerShortTon: "",
+    pricePerBag: "",
+    priceBagId: "two-cu-ft",
+  }),
+);
+const coverRows = [2, 3, 4].map((depth) => ({
+  depth,
+  coverage: sqFtPerCubicYard(depth),
+}));
+const faqs: Faq[] = [
+  {
+    question: "How much mulch do I need?",
+    answer:
+      "Multiply the bed area in square feet by the depth in inches, then divide by 324 to get cubic yards. A 9 by 12 foot bed at 3 inches is exactly 1 cubic yard, which is 27 cubic feet.",
+  },
+  {
+    question: "How many bags of mulch are in a cubic yard?",
+    answer:
+      "A cubic yard is 27 cubic feet. That is 13.5 bags of 2 cubic feet, so you buy 14 if the store sells only whole bags, or 9 bags of 3 cubic feet exactly. The calculator rounds each bag size up on its own.",
+  },
+  {
+    question: "How deep should mulch be?",
+    answer:
+      "Extension guidance for trees and shrubs is generally 2 to 4 inches, and less than that on poorly drained soil or with fine shredded mulch. Keep the mulch off the trunk so the root flare stays visible. Penn State Extension, Iowa State University Extension, and University of Illinois Extension all describe this depth and warn against piling mulch against the bark.",
+  },
+  {
+    question: "Should I remove old mulch before adding more?",
+    answer:
+      "If the layer already there is still near the right depth, rake it to break up a crust instead of stacking a fresh 3 inches on top. Measure what is in place and enter only the depth you still need to add. The calculator estimates the depth you type.",
+  },
+  {
+    question: "Does mulch need a compaction allowance?",
+    answer:
+      "No. Mulch is not compacted the way a gravel base is. The allowance is for odd edges and spillage. The form opens at 0 percent so the sample bed is a clean cubic yard. Use 5 to 10 percent for a bed with curves or a lot of tree trunks to work around.",
+  },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Mulch calculator", description, pathname, faqs })}>
+  <header class="page-intro">
+    <Breadcrumb current="Mulch calculator" />
+    <h1>Mulch calculator</h1>
+    <p class="lede">
+      Estimate cubic yards of mulch and the number of 2 cubic foot and 3 cubic foot bags. The
+      depth guide below is the part that keeps a bed from becoming a mulch volcano.
+    </p>
+  </header>
+
+  <div class="calculator-wrap">
+    <VolumeCalculator
+      presets={mulchPresets}
+      defaultPresetId={mulchExample.presetId}
+      primary={mulchExample.primary}
+      secondary={mulchExample.secondary}
+      depthInches={mulchExample.depthInches}
+      allowancePercent={mulchExample.allowancePercent}
+      bags={mulchBags}
+      depthHelp="Most beds want 2 to 4 inches total, kept off trunks and stems. Enter only the depth you still need to add."
+      allowanceHelp="Mulch does not need a compaction factor. Use 0 percent for a simple rectangle, or 5 to 10 percent for curves and spillage."
+      bagNote="A cubic yard is 27 cubic feet: 13.5 bags at 2 cubic feet, or 9 bags at 3 cubic feet. Counts round up to a whole bag. The weight is only a hauling estimate."
+    />
+  </div>
+
+  <AdSlot slotId="mulch-rectangle" />
+
+  <article class="prose">
+    <h2>How deep mulch should be</h2>
+    <p>
+      For trees and shrubs, a 2 to 4 inch layer is the range repeated across university extension
+      publications. Penn State Extension says to apply 2 to 4 inches and no more, and to use less
+      on poorly drained soil or with finely shredded mulch, which lets less oxygen through.
+      <a href="https://yardandgarden.extension.iastate.edu/faq/how-deep-should-mulch-layer-be-around-trees-and-shrubs">Iowa State</a>
+      suggests 3 to 4 inches of wood chips or shredded bark on well-drained sites and 2 to 3 inches
+      on heavy soil.
+      <a href="https://extension.illinois.edu/sites/default/files/proper_mulching_techniques_infosheet.pdf">Illinois Extension</a>
+      tells you to keep mulch at least a few inches off the trunk.
+    </p>
+    <p>
+      More than about 4 inches can mat, stay wet, and send roots into the mulch instead of the
+      soil. Piling it against the trunk, the “volcano,” keeps bark wet and hides the root flare.
+      Spread the mulch outward in a ring, and leave the flare visible. Around small plants, stop
+      short of the stems the same way.
+    </p>
+    <p>
+      If mulch is already there, measure it. Enter the inches you still need, not a fresh 3 inches
+      on top of 3 inches that have not broken down. A rake through a crusted layer is sometimes the
+      whole job.
+    </p>
+
+    <h2>How much ground a yard covers</h2>
+    <p>
+      One cubic yard is 27 cubic feet. At 1 inch deep it covers 324 square feet. Divide 324 by the
+      depth in inches.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <caption>Square feet covered by one cubic yard of mulch</caption>
+        <thead>
+          <tr>
+            <th>Depth</th>
+            <th class="num">Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            coverRows.map((row) => (
+              <tr>
+                <td>{row.depth} inches</td>
+                <td class="num">{formatNumber(row.coverage, 0)} sq ft</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Bags follow the same 27 cubic feet. Nine bags of 3 cubic feet are one yard. Bags of 2 cubic
+      feet come out to 13.5, so the 14th bag is the one that finishes a yard when you cannot buy a
+      half bag. Bulk delivery is usually cheaper once the bed is more than a couple of yards, and
+      the price-per-yard field is there for that quote.
+    </p>
+
+    <h2>How to measure a bed</h2>
+    <ul>
+      <li>Rectangle: length times width of the bed, not of the whole yard.</li>
+      <li>A bed around a tree: measure the ring as a circle using the outer diameter, then subtract the open circle you leave around the trunk. Run the calculator twice and subtract the cubic yards.</li>
+      <li>A border along a fence: a long rectangle. Measure the width of the bed, not the property line.</li>
+      <li>Curves: a 5 to 10 percent allowance covers the extra you use working around edges. The sample bed uses 0 percent because it is a clean rectangle.</li>
+    </ul>
+
+    <h2>The example loaded in the form</h2>
+    <p>
+      A {mulchExample.primary} by {mulchExample.secondary} foot bed at {mulchExample.depthInches} inches
+      is {formatNumber(example.areaSqFt, 0)} square feet. That depth is exactly one quarter of a
+      foot, and 108 square feet times 0.25 feet is 27 cubic feet, which is
+      {formatNumber(example.netCubicYards, 0)} cubic yard. With the allowance at
+      {mulchExample.allowancePercent} percent, the order stays
+      {formatNumber(example.orderedCubicYards, 0)} cubic yard:
+      {formatNumber(example.bags.find((bag) => bag.id === "two-cu-ft")?.exact ?? 0, 1)} bags of 2
+      cubic feet ({example.bags.find((bag) => bag.id === "two-cu-ft")?.count} to buy) or
+      {example.bags.find((bag) => bag.id === "three-cu-ft")?.count} bags of 3 cubic feet.
+    </p>
+    <p>
+      The weight in the result is a hauling check, not the way mulch is sold. Shredded hardwood
+      varies from about 400 to 800 pounds per cubic yard with moisture and fines. The preset uses
+      22 pounds per cubic foot, about 600 pounds per yard, in the middle of that band. Bark nuggets
+      are lighter. Confirm a heavy, wet load against the payload sticker in the truck.
+    </p>
+
+    <AdSlot slotId="mulch-banner" size="banner" />
+    <FaqList faqs={faqs} />
+    <RelatedTools current={pathname} />
+  </article>
+</BaseLayout>

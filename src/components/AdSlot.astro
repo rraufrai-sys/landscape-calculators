@@ -1,0 +1,17 @@
+---
+interface Props {
+  slotId: string;
+  size?: "rectangle" | "banner";
+}
+
+const { slotId, size = "rectangle" } = Astro.props;
+---
+
+<aside
+  class:list={["ad-slot", size === "banner" && "ad-slot--banner"]}
+  data-ad-slot={slotId}
+  aria-label="Advertisement placeholder"
+>
+  <p class="ad-slot__label">Advertisement</p>
+  <p class="ad-slot__note">Reserved ad slot. No ad code is loaded.</p>
+</aside>

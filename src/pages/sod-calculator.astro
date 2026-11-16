@@ -1,0 +1,140 @@
+---
+import AdSlot from "../components/AdSlot.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import FaqList from "../components/FaqList.astro";
+import RelatedTools from "../components/RelatedTools.astro";
+import SodCalculator from "../components/SodCalculator.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sodExample } from "../config/examples";
+import { formatNumber, sodOrderFromFields, unwrap } from "../lib/calc";
+import { calculatorJsonLd, type Faq } from "../lib/seo";
+
+const title = "Sod Calculator — Square Feet, Pallets, and Rolls | Yardwork";
+const description =
+  "Calculate sod in square feet, pallets, and rolls. Change the pallet size, roll size, and waste allowance, then estimate the material cost.";
+const pathname = "/sod-calculator/";
+const example = unwrap(
+  sodOrderFromFields({
+    unitSystem: "us",
+    shape: "rectangle",
+    primary: String(sodExample.primary),
+    secondary: String(sodExample.secondary),
+    allowancePercent: String(sodExample.allowancePercent),
+    sqFtPerPallet: String(sodExample.sqFtPerPallet),
+    sqFtPerPiece: String(sodExample.sqFtPerPiece),
+    pieceName: "rolls",
+    pricePerSqFt: "",
+    pricePerPallet: "",
+  }),
+);
+const faqs: Faq[] = [
+  {
+    question: "How much sod do I need?",
+    answer:
+      "Measure the lawn in square feet and add a waste allowance for cuts. A 30 by 15 foot rectangle is 450 square feet. Five percent for trimming brings the order to 472.5 square feet.",
+  },
+  {
+    question: "How many square feet are on a pallet of sod?",
+    answer:
+      "A common US pallet is about 450 square feet, often 45 rolls of about 10 square feet (2 feet by 5 feet). Farms also sell 400 and 500 square foot pallets. Change both sizes in the form to match the farm. Big-roll sod, laid by machine, is a different product and is not what the roll field assumes.",
+  },
+  {
+    question: "Why does a 450 square foot lawn come out to 2 pallets?",
+    answer:
+      "Five percent extra is 472.5 square feet. Divided by a 450 square foot pallet, that is 1.05 pallets, and whole pallets round up to 2. The last pallet would be about 5 percent full. Forty-eight rolls of 10 square feet cover the same order. Ask the farm if it sells loose rolls before you pay for a second pallet.",
+  },
+  {
+    question: "How much extra sod should I order?",
+    answer:
+      "About 5 percent for a simple rectangle, and closer to 10 percent when the lawn has curves, tree rings, or a lot of trimming around beds. The extra is the pieces you cut off. Sod does not need a compaction allowance.",
+  },
+  {
+    question: "How many rolls of sod are in a pallet?",
+    answer:
+      "At 450 square feet per pallet and 10 square feet per roll, 45 rolls. Both numbers are editable because farms cut different pieces, including smaller slabs. Set the roll size to the piece you will actually handle.",
+  },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={calculatorJsonLd({ name: "Sod calculator", description, pathname, faqs })}>
+  <header class="page-intro">
+    <Breadcrumb current="Sod calculator" />
+    <h1>Sod calculator</h1>
+    <p class="lede">
+      Turn a lawn measurement into square feet, pallets, and rolls. Pallet and roll sizes are
+      editable because they are sales units, not physical constants.
+    </p>
+  </header>
+
+  <div class="calculator-wrap">
+    <SodCalculator
+      primary={sodExample.primary}
+      secondary={sodExample.secondary}
+      allowancePercent={sodExample.allowancePercent}
+      sqFtPerPallet={sodExample.sqFtPerPallet}
+      sqFtPerPiece={sodExample.sqFtPerPiece}
+      allowanceHelp="About 5 percent for a simple rectangle, and closer to 10 percent for curves and tight trimming."
+    />
+  </div>
+
+  <AdSlot slotId="sod-rectangle" />
+
+  <article class="prose">
+    <h2>How to measure the lawn</h2>
+    <ul>
+      <li>Rectangle: the two sides of the area that will be sod, not the whole lot if beds and walks cut into it.</li>
+      <li>More than one shape: calculate each piece and add the square feet. A front lawn that is a rectangle with a half-round walk can be a rectangle plus a circle, with the walk subtracted if you measure it separately.</li>
+      <li>Circle: enter the diameter. Triangle: enter the base and the height measured square to that base.</li>
+      <li>Slopes: measure along the ground. A plan-view measurement of a steep bank undercounts the sod you will lay on the surface.</li>
+    </ul>
+    <p>
+      The metric switch converts the lawn dimensions. Pallet and roll sizes stay in square feet,
+      which is how the farms sell them. The result still shows square meters of the measured area.
+    </p>
+
+    <h2>Pallets, rolls, and the awkward extra pallet</h2>
+    <p>
+      Many farms in the US sell a pallet as about {sodExample.sqFtPerPallet} square feet of rolls
+      around {sodExample.sqFtPerPiece} square feet each. Others sell 400 or 500 square feet, or cut
+      slabs instead of 2 by 5 foot rolls. The two size fields are there so the ticket from the
+      farm wins over a default.
+    </p>
+    <p>
+      Counts round up because you cannot buy a fraction of a pallet or a fraction of a roll from
+      most suppliers. The exact pallet count stays visible so you can see how full that last
+      pallet would be. When it is under half full, the note under the result says so. Loose rolls
+      are often the cheaper way to cover a few percent of overflow.
+    </p>
+    <p>
+      A pallet of fresh sod is a compact, wet load, often well over a thousand pounds. Plan on
+      delivery, and install it the day it arrives. Sod heats up on the pallet. Water it as it goes
+      down, the same day.
+    </p>
+
+    <h2>The example loaded in the form</h2>
+    <p>
+      A {sodExample.primary} by {sodExample.secondary} foot rectangle is
+      {formatNumber(example.areaSqFt, 0)} square feet, which is
+      {formatNumber(example.areaSqYd, 0)} square yards and exactly one
+      {sodExample.sqFtPerPallet} square foot pallet before waste. A
+      {sodExample.allowancePercent} percent allowance makes the order
+      {formatNumber(example.orderedSqFt, 1)} square feet. That is
+      {formatNumber(example.exactPallets, 2)} pallets, so {example.palletsToOrder} if you can buy
+      only whole pallets, or {example.piecesToOrder} rolls at {sodExample.sqFtPerPiece} square feet.
+    </p>
+    <p>
+      Five percent is a fair allowance for a rectangle with ordinary edge cuts. A lawn broken up
+      by curves, a circular bed, or a winding walk wastes more pieces. Use 10 percent there, and
+      look at the exact pallet number before you accept the rounded-up count.
+    </p>
+    <p>
+      The square-foot price uses the order area, including the allowance. The pallet price uses
+      the rounded-up pallet count, which is why a barely-over-one-pallet lawn can look expensive
+      if the farm will not split a pallet. Those two prices are alternatives.
+    </p>
+
+    <AdSlot slotId="sod-banner" size="banner" />
+    <FaqList faqs={faqs} />
+    <RelatedTools current={pathname} />
+  </article>
+</BaseLayout>

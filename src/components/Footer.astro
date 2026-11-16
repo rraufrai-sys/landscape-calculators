@@ -1,0 +1,35 @@
+---
+import { tools } from "../config/tools";
+import { site } from "../config/site";
+
+const pages = [
+  { href: "/about/", label: "About" },
+  { href: "/methodology/", label: "Methodology" },
+  { href: "/privacy/", label: "Privacy" },
+  { href: "/terms/", label: "Terms" },
+  { href: "/contact/", label: "Contact" },
+];
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__name">{site.legalName}</p>
+      <p>{site.tagline}</p>
+    </div>
+    <nav aria-label="Calculators">
+      <ul>
+        {tools.map((tool) => <li><a href={tool.href}>{tool.name}</a></li>)}
+      </ul>
+    </nav>
+    <nav aria-label="About this site">
+      <ul>
+        {pages.map((page) => <li><a href={page.href}>{page.label}</a></li>)}
+      </ul>
+    </nav>
+    <p class="site-footer__note">
+      Outlined boxes marked Advertisement are empty placeholders. This version does not load
+      advertising code. Estimates use the formulas and densities published on the methodology page.
+    </p>
+  </div>
+</footer>

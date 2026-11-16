@@ -1,0 +1,85 @@
+---
+import AdSlot from "../components/AdSlot.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site";
+import { tools } from "../config/tools";
+import { homeJsonLd } from "../lib/seo";
+
+const title = "Gravel, Mulch, Topsoil, and Sod Calculators | Yardwork";
+const description = site.description;
+---
+
+<BaseLayout title={title} description={description} jsonLd={homeJsonLd()}>
+  <section class="home-hero">
+    <div>
+      <h1>Calculators for gravel, mulch, topsoil, and sod</h1>
+      <p class="lede">
+        Order the right amount of material for a US yard. Each tool turns a measured area into cubic
+        yards, short tons, bags, or pallets, and shows the arithmetic beside the result.
+      </p>
+      <ul class="trust-list">
+        <li>Rectangle, circle, and triangle areas, with depth in inches.</li>
+        <li>Densities you can replace with the figure on a supplier ticket.</li>
+        <li>Bag counts for 0.5, 2, and 3 cubic foot bags, plus common weight bags.</li>
+        <li>The math runs in your browser. Measurements are not sent to a server.</li>
+      </ul>
+    </div>
+    <svg class="diagram" viewBox="0 0 360 250" role="img" aria-labelledby="diagram-title">
+      <title id="diagram-title">A rectangular bed marked with length, width, and depth</title>
+      <rect x="48" y="78" width="230" height="120" rx="8" fill="#fffdf8" stroke="#cfc4b0"></rect>
+      <rect x="48" y="78" width="230" height="28" fill="#1d5c3b"></rect>
+      <rect x="48" y="106" width="230" height="46" fill="#8a5a32"></rect>
+      <rect x="48" y="152" width="230" height="46" fill="#d7c4a4"></rect>
+      <path d="M48 198 H278" fill="none" stroke="#1b2420" stroke-width="1.5"></path>
+      <path d="M48 192 V204 M278 192 V204" fill="none" stroke="#1b2420" stroke-width="1.5"></path>
+      <text x="163" y="226" text-anchor="middle" fill="#1b2420" font-size="16" font-family="Georgia, serif">
+        length
+      </text>
+      <path d="M300 78 V198" fill="none" stroke="#1b2420" stroke-width="1.5"></path>
+      <path d="M294 78 H306 M294 198 H306" fill="none" stroke="#1b2420" stroke-width="1.5"></path>
+      <text x="328" y="142" fill="#1b2420" font-size="16" font-family="Georgia, serif">depth</text>
+      <text x="163" y="54" text-anchor="middle" fill="#3d4a43" font-size="15" font-family="Georgia, serif">
+        width × length × depth
+      </text>
+    </svg>
+  </section>
+
+  <section class="home-section" aria-labelledby="tools-heading">
+    <h2 id="tools-heading">Tools</h2>
+    <div class="tool-grid">
+      {
+        tools.map((tool) => (
+          <a class="tool-card" href={tool.href}>
+            <h2>{tool.name}</h2>
+            <p>{tool.detail}</p>
+            <span>{tool.summary}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <AdSlot slotId="home-banner" size="banner" />
+
+  <section class="prose">
+    <h2>What the numbers mean</h2>
+    <p>
+      A cubic yard is 27 cubic feet. Spread an inch deep, that yard covers 324 square feet. Depth
+      in inches divided into 324 is the coverage of one yard, which is why a 3 inch mulch layer
+      covers 108 square feet per yard. The
+      <a href="/methodology/">methodology</a> writes this out with the unit conversions and the
+      density used for each material.
+    </p>
+    <p>
+      Bulk gravel and soil are often sold by the ton as well as by the yard. A short ton is 2,000
+      pounds. It matches a cubic yard only for a material that weighs about 74 pounds per cubic
+      foot, which is lighter than ordinary gravel or topsoil. The calculators keep yards and tons
+      as separate results and let you edit the density.
+    </p>
+    <p>
+      Sod is an area, not a volume. The sod calculator stays in square feet and converts that area
+      into pallets and rolls using sizes you can change, because farms do not all cut the same
+      pallet.
+    </p>
+  </section>
+</BaseLayout>
