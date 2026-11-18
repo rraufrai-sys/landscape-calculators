@@ -1,4 +1,4 @@
-# Yardwork Calculators
+# Landscape Calc Pro
 
 Free, US-focused calculators for gravel, mulch, topsoil, and sod. The site is a static [Astro](https://astro.build) project aimed at search and at a later AdSense review: unique titles and descriptions, canonical URLs, Open Graph, FAQ and WebApplication structured data, a sitemap, a 404 page, and the About, methodology, privacy, terms, and contact pages reviewers expect.
 
