@@ -7,8 +7,8 @@ export const siteUrl = "https://landscapecalcpro.com";
 
 export const site = {
   url: siteUrl,
-  name: "Yardwork",
-  legalName: "Yardwork Calculators",
+  name: "Landscape Calc Pro",
+  legalName: "Landscape Calc Pro",
   tagline: "Free US calculators for gravel, mulch, topsoil, and sod.",
   description:
     "Free US calculators for gravel, mulch, topsoil, and sod. Estimate cubic yards, short tons, bags, pallets, and a material cost from your own price.",
