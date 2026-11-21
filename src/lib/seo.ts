@@ -77,6 +77,7 @@ export function homeJsonLd() {
         url: `${site.url}/`,
         description: site.description,
         inLanguage: "en-US",
+        sameAs: site.social.map((profile) => profile.href),
         publisher: { "@id": personId },
       },
       {
@@ -167,6 +168,7 @@ function personNode() {
     name: site.publisherName,
     email: site.contact.email,
     url: pageUrl("/about/"),
+    sameAs: site.social.map((profile) => profile.href),
   };
 }
 
