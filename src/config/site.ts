@@ -7,7 +7,7 @@ export const siteUrl = "https://landscapecalcpro.com";
 
 export const social = [
   { name: "Pinterest", href: "https://www.pinterest.com/landscapecalcpro/" },
-  { name: "YouTube", href: "https://www.youtube.com/@LandscapeCalcPro" },
+  { name: "YouTube", href: "https://www.youtube.com/@landscapecalcpro-y8d" },
   { name: "Facebook", href: "https://www.facebook.com/landscapecalcpro" },
   { name: "X", href: "https://x.com/LandscapeCalc" },
 ] as const;
